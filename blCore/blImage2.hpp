@@ -223,15 +223,18 @@ inline bool blImage2<blDataType>::create(const int& numOfRows,
     // if the current image
     // is of different size
 
-    if(this->size1() == numOfRows && this->size2() == numOfCols)
+    if(this->getImageSharedPtr())
     {
-        // In this case the
-        // image is already
-        // of the correct size
-        // so there's no need
-        // to create a new one
+        if(this->size1() == numOfRows && this->size2() == numOfCols)
+        {
+            // In this case the
+            // image is already
+            // of the correct size
+            // so there's no need
+            // to create a new one
 
-        return true;
+            return true;
+        }
     }
 
     IplImage* newImage = NULL;
@@ -292,6 +295,18 @@ inline bool blImage2<blDataType>::create(const int& numOfRows,
     if(newImage != NULL)
     {
         this->m_imageSharedPtr = blImagePtr(newImage,releaseImage());
+
+        // We always set the ROI
+        // so that when we check the
+        // ROI we can do so very quickly
+        // without checking for
+        // pointer validity
+
+        cvSetImageROI(*this,CvRect(0,0,this->size2(),this->size1()));
+
+        // We are done and signal
+        // that the image was created
+        // successfully
 
         return true;
     }
@@ -555,24 +570,11 @@ inline int blImage2<blDataType>::iROI()const
 template<typename blDataType>
 inline CvRect blImage2<blDataType>::getROI()const
 {
-    if(this->getImageSharedPtr())
-    {
-        CvRect imageROI = cvGetImageROI(*this);
+    auto roi = this->getImageSharedPtr()->roi;
 
-        if(this->isDataTypeNativelySupported())
-            return imageROI;
-        else
-        {
-            imageROI.x /= sizeof(blDataType);
-            imageROI.width /= sizeof(blDataType);
+    CvRect imageROI(roi->xOffset,roi->yOffset,roi->width,roi->height);
 
-            return imageROI;
-        }
-    }
-    else
-    {
-        return cvRect(0,0,0,0);
-    }
+    return imageROI;
 }
 //-------------------------------------------------------------------
 
@@ -581,10 +583,10 @@ inline CvRect blImage2<blDataType>::getROI()const
 template<typename blDataType>
 inline void blImage2<blDataType>::resetROI()
 {
-    if(this->getImageSharedPtr())
-    {
-        cvResetImageROI(*this);
-    }
+    // We reset the image
+    // ROI to the entire image
+
+    this->setROI(0,0,this->size1(),this->size2());
 }
 //-------------------------------------------------------------------
 
@@ -596,13 +598,21 @@ inline void blImage2<blDataType>::setROI(const CvRect& ROIrect,
 {
     if(!shouldImageBeResizedToAccomodateForBiggerROI)
     {
-        cvSetImageROI(*this,ROIrect);
+        if(this->size() > 0)
+        {
+            int xNew = std::min(this->size2() - 1,ROIrect.x);
+            int yNew = std::min(this->size1() - 1,ROIrect.y);
+            int widthNew = std::min(this->size2() - xNew,ROIrect.width);
+            int heightNew = std::min(this->size1() - yNew,ROIrect.height);
+
+            cvSetImageROI((*this),CvRect(xNew,yNew,widthNew,heightNew));
+        }
     }
     else
     {
         // In this case, we have to
         // check if the user has set
-        // an ROI which would be
+        // a ROI which would be
         // out of the bounds of the
         // current image, and if that
         // is the case then the user wants

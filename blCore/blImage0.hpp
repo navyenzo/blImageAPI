@@ -400,7 +400,11 @@ inline const blDataType& blImage0<blDataType>::circ_at(const int& imageElementIn
         return ( (*this)[0][0] );
 
     if(imageElementIndex < 0)
-        return (*this)(this->size() + imageElementIndex % this->size());
+    {
+        auto imageSize = this->size();
+
+        return (*this)(imageSize + imageElementIndex % imageSize);
+    }
     else
         return (*this)(imageElementIndex % this->size());
 }
@@ -469,10 +473,7 @@ inline int blImage0<blDataType>::getSizeOfDepthInBytes()const
 template<typename blDataType>
 inline int blImage0<blDataType>::size1()const
 {
-    if(this->size2() <= 0)
-        return 0;
-    else
-        return m_imageSharedPtr->height;
+    return m_imageSharedPtr->height;
 }
 //-------------------------------------------------------------------
 
@@ -483,10 +484,7 @@ inline int blImage0<blDataType>::size2()const
 {
     if(isDataTypeNativelySupported())
     {
-        if(m_imageSharedPtr)
-            return m_imageSharedPtr->width;
-        else
-            return 0;
+        return m_imageSharedPtr->width;
     }
     else
     {
