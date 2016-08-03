@@ -252,6 +252,7 @@ inline blImage0<blDataType>::blImage0()
 template<typename blDataType>
 inline blImage0<blDataType>::blImage0(const blImage0<blDataType>& Image0)
 {
+    m_imageSharedPtr = Image0.getImageSharedPtr();
 }
 //-------------------------------------------------------------------
 
