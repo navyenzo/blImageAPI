@@ -330,22 +330,26 @@ template<typename blDataType>
 inline blDataType& blImage0<blDataType>::circ_at(const int& rowIndex,
                                                  const int& colIndex)
 {
-    if(this->size() == 0)
-        return ( (*this)[0][0] );
+    auto rows = this->size1();
+    auto cols = this->size2();
 
     if(rowIndex < 0)
     {
         if(colIndex < 0)
-            return ( (*this)[this->size1() + rowIndex % this->size1()][this->size2() + colIndex % this->size2()] );
+            return ( (*this)(rows + rowIndex % rows,
+                             cols + colIndex % cols) );
         else
-            return ( (*this)[this->size1() + rowIndex % this->size1()][colIndex % this->size2()] );
+            return ( (*this)(rows + rowIndex % rows,
+                             colIndex % cols) );
     }
     else
     {
         if(colIndex < 0)
-            return ( (*this)[rowIndex % this->size1()][this->size2() + colIndex % this->size2()] );
+            return ( (*this)(rowIndex % rows,
+                             cols + colIndex % cols) );
         else
-            return ( (*this)[rowIndex % this->size1()][colIndex % this->size2()] );
+            return ( (*this)(rowIndex % rows,
+                             colIndex % cols) );
     }
 }
 //-------------------------------------------------------------------
@@ -356,22 +360,26 @@ template<typename blDataType>
 inline const blDataType& blImage0<blDataType>::circ_at(const int& rowIndex,
                                                        const int& colIndex)const
 {
-    if(this->size() == 0)
-        return ( (*this)[0][0] );
+    auto rows = this->size1();
+    auto cols = this->size2();
 
     if(rowIndex < 0)
     {
         if(colIndex < 0)
-            return ( (*this)[this->size1() + rowIndex % this->size1()][this->size2() + colIndex % this->size2()] );
+            return ( (*this)(rows + rowIndex % rows,
+                             cols + colIndex % cols) );
         else
-            return ( (*this)[this->size1() + rowIndex % this->size1()][colIndex % this->size2()] );
+            return ( (*this)(rows + rowIndex % rows,
+                             colIndex % cols) );
     }
     else
     {
         if(colIndex < 0)
-            return ( (*this)[rowIndex % this->size1()][this->size2() + colIndex % this->size2()] );
+            return ( (*this)(rowIndex % rows,
+                             cols + colIndex % cols) );
         else
-            return ( (*this)[rowIndex % this->size1()][colIndex % this->size2()] );
+            return ( (*this)(rowIndex % rows,
+                             colIndex % cols) );
     }
 }
 //-------------------------------------------------------------------

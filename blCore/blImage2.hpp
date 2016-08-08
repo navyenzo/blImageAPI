@@ -77,8 +77,7 @@ public: // Public functions
     // the image specifying size
     // and initial value
 
-    bool                                    create(const int& numOfRows,
-                                                   const int& numOfCols);
+    bool                                    create(int numOfRows,int numOfCols);
 
     bool                                    create(const int& numOfRows,
                                                    const int& numOfCols,
@@ -216,9 +215,20 @@ inline blImage2<blDataType>::blImage2(const blImage2<blDataType>& Image2) : blIm
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline bool blImage2<blDataType>::create(const int& numOfRows,
-                                         const int& numOfCols)
+inline bool blImage2<blDataType>::create(int numOfRows,int numOfCols)
 {
+    // Let's make sure that the image
+    // is not zero sized so that we
+    // don't have to check for zero
+    // sized images in other algorithms
+    // (It speeds up basic functions
+    // such as the size() functions)
+
+    if(numOfRows <= 0)
+        numOfRows = 1;
+    if(numOfCols <= 0)
+        numOfCols = 1;
+
     // Only create the image
     // if the current image
     // is of different size
@@ -407,26 +417,26 @@ template<typename blDataType>
 inline blDataType& blImage2<blDataType>::circ_atROI(const int& rowIndex,
                                                     const int& colIndex)
 {
-    if(this->sizeROI() == 0)
-        return ( this->atROI(0,0) );
+    auto rows = this->size1ROI();
+    auto cols = this->size2ROI();
 
     if(rowIndex < 0)
     {
         if(colIndex < 0)
-            return ( this->atROI(this->size1ROI() + rowIndex % this->size1ROI(),
-                                 this->size2ROI() + colIndex % this->size2ROI()) );
+            return ( this->atROI(rows + rowIndex % rows,
+                                 cols + colIndex % cols) );
         else
-            return ( this->atROI(this->size1ROI() + rowIndex % this->size1ROI(),
-                                 colIndex % this->size2ROI()) );
+            return ( this->atROI(rows + rowIndex % rows,
+                                 colIndex % cols) );
     }
     else
     {
         if(colIndex < 0)
-            return ( this->atROI(rowIndex % this->size1ROI(),
-                                 this->size2ROI() + colIndex % this->size2ROI()) );
+            return ( this->atROI(rowIndex % rows,
+                                 cols + colIndex % cols) );
         else
-            return ( this->atROI(rowIndex % this->size1ROI(),
-                                 colIndex % this->size2ROI()) );
+            return ( this->atROI(rowIndex % rows,
+                                 colIndex % cols) );
     }
 }
 //-------------------------------------------------------------------
@@ -437,26 +447,26 @@ template<typename blDataType>
 inline const blDataType& blImage2<blDataType>::circ_atROI(const int& rowIndex,
                                                           const int& colIndex)const
 {
-    if(this->sizeROI() == 0)
-        return ( this->atROI(0,0) );
+    auto rows = this->size1ROI();
+    auto cols = this->size2ROI();
 
     if(rowIndex < 0)
     {
         if(colIndex < 0)
-            return ( this->atROI(this->size1ROI() + rowIndex % this->size1ROI(),
-                                 this->size2ROI() + colIndex % this->size2ROI()) );
+            return ( this->atROI(rows + rowIndex % rows,
+                                 cols + colIndex % cols) );
         else
-            return ( this->atROI(this->size1ROI() + rowIndex % this->size1ROI(),
-                                 colIndex % this->size2ROI()) );
+            return ( this->atROI(rows + rowIndex % rows,
+                                 colIndex % cols) );
     }
     else
     {
         if(colIndex < 0)
-            return ( this->atROI(rowIndex % this->size1ROI(),
-                                 this->size2ROI() + colIndex % this->size2ROI()) );
+            return ( this->atROI(rowIndex % rows,
+                                 cols + colIndex % cols) );
         else
-            return ( this->atROI(rowIndex % this->size1ROI(),
-                                 colIndex % this->size2ROI()) );
+            return ( this->atROI(rowIndex % rows,
+                                 colIndex % cols) );
     }
 }
 //-------------------------------------------------------------------
