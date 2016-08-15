@@ -608,18 +608,15 @@ template<typename blDataType>
 
 inline blDataType trace(const blImage<blDataType>& srcImage)
 {
-    if(srcImage.sizeROI() <= 0)
-        return blDataType(0);
-
     int rows = srcImage.size1ROI();
     int cols = srcImage.size2ROI();
 
     int yROI = srcImage.yROI();
     int xROI = srcImage.xROI();
 
-    blDataType result = srcImage(yROI,xROI);
+    blDataType result = blDataType(0);
 
-    for(int i = yROI + 1, j = xROI + 1; i < rows + yROI && j < cols + xROI; ++i, ++j)
+    for(int i = yROI, j = xROI; i < rows + yROI && j < cols + xROI; ++i, ++j)
     {
         result += srcImage(i,j);
     }
@@ -826,10 +823,11 @@ inline blDataType perElementSquareOfDifference(const blDataType& src1,
 
 
 //-------------------------------------------------------------------
-template<typename blDataType>
+template<typename blDataType,
+         typename blDataType2>
 
 inline void perElementAddition(blImage<blDataType>& img,
-                               const blDataType& scalar)
+                               const blDataType2& scalar)
 {
     int rows = img.size1ROI();
     int cols = img.size2ROI();
@@ -850,10 +848,11 @@ inline void perElementAddition(blImage<blDataType>& img,
 
 
 //-------------------------------------------------------------------
-template<typename blDataType>
+template<typename blDataType,
+         typename blDataType2>
 
 inline void perElementSubtraction(blImage<blDataType>& img,
-                                  const blDataType& scalar)
+                                  const blDataType2& scalar)
 {
     int rows = img.size1ROI();
     int cols = img.size2ROI();
@@ -874,10 +873,11 @@ inline void perElementSubtraction(blImage<blDataType>& img,
 
 
 //-------------------------------------------------------------------
-template<typename blDataType>
+template<typename blDataType,
+         typename blDataType2>
 
 inline void perElementMultiplication(blImage<blDataType>& img,
-                                     const blDataType& scalar)
+                                     const blDataType2& scalar)
 {
     int rows = img.size1ROI();
     int cols = img.size2ROI();
@@ -898,10 +898,11 @@ inline void perElementMultiplication(blImage<blDataType>& img,
 
 
 //-------------------------------------------------------------------
-template<typename blDataType>
+template<typename blDataType,
+         typename blDataType2>
 
 inline void perElementDivision(blImage<blDataType>& img,
-                               const blDataType& scalar)
+                               const blDataType2& scalar)
 {
     int rows = img.size1ROI();
     int cols = img.size2ROI();
@@ -922,10 +923,11 @@ inline void perElementDivision(blImage<blDataType>& img,
 
 
 //-------------------------------------------------------------------
-template<typename blDataType>
+template<typename blDataType,
+         typename blDataType2>
 
 inline void perElementSquareOfDifference(blImage<blDataType>& img,
-                                         const blDataType& scalar)
+                                         const blDataType2& scalar)
 {
     int rows = img.size1ROI();
     int cols = img.size2ROI();
@@ -1247,6 +1249,49 @@ inline blImage<blDataType> perElementSquareOfDifference(const blImage<blDataType
 
 //-------------------------------------------------------------------
 // The following functions
+// generate a random image
+//-------------------------------------------------------------------
+template<typename blDataType,
+         typename blDataType2>
+
+inline void randomUniformFill(blImage<blDataType>& img,
+                              cv::RNG& rng,
+                              const blDataType2& lowLimit = blDataType2(0),
+                              const blDataType2& highLimit = blDataType2(1))
+{
+    for(int i = 0; i < img.size1ROI(); ++i)
+    {
+        for(int j = 0; j < img.size2ROI(); ++j)
+        {
+            img.atROI(i,j) = rng.uniform(lowLimit,highLimit);
+        }
+    }
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType,
+         typename blDataType2>
+
+inline void randomGaussianFill(blImage<blDataType>& img,
+                               cv::RNG& rng,
+                               const blDataType2& meanValue = blDataType2(0),
+                               const blDataType2& standardDeviation = blDataType2(1))
+{
+    for(int i = 0; i < img.size1ROI(); ++i)
+    {
+        for(int j = 0; j < img.size2ROI(); ++j)
+        {
+            img.atROI(i,j) = rng.gaussian(standardDeviation) + meanValue;
+        }
+    }
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+// The following functions
 // calculate the mean, variance
 // and standard deviation of
 // a matrix (image)
@@ -1259,32 +1304,17 @@ template<typename blDataType>
 inline void mean(const blImage<blDataType>& srcImage,
                  blDataType& meanValue)
 {
-    if(srcImage.sizeROI() <= 0)
+    meanValue = blDataType(0);
+
+    for(int i = 0; i < srcImage.size1ROI(); ++i)
     {
-        meanValue = blDataType(0);
-        return;
-    }
-
-    int rows = srcImage.size1ROI();
-    int cols = srcImage.size2ROI();
-
-    int yROI = srcImage.yROI();
-    int xROI = srcImage.xROI();
-
-    meanValue = srcImage(yROI,xROI);
-
-    for(int i = yROI; i < yROI + rows; ++i)
-    {
-        for(int j = xROI; j < xROI + cols; ++j)
+        for(int j = 0; j < srcImage.size2ROI(); ++j)
         {
-            if(i != yROI || j != xROI)
-            {
-                perElementAddition(meanValue,srcImage(i,j),meanValue);
-            }
+            meanValue += srcImage.atROI(i,j);
         }
     }
 
-    perElementDivision(meanValue,blDataType(rows*cols),meanValue);
+    meanValue /= srcImage.sizeROI();
 }
 //-------------------------------------------------------------------
 
@@ -1309,28 +1339,19 @@ template<typename blDataType>
 inline blDataType variance(const blImage<blDataType>& srcImage,
                            const blDataType& meanValue)
 {
-    if(srcImage.sizeROI() <= 1)
-        return blDataType(0);
+    blDataType varianceValue = blDataType(0);
 
-    int rows = srcImage.size1ROI();
-    int cols = srcImage.size2ROI();
-
-    int yROI = srcImage.yROI();
-    int xROI = srcImage.xROI();
-
-    blDataType result = blDataType(0);
-
-    for(int i = yROI; i < yROI + rows; ++i)
+    for(int i = 0; i < srcImage.size1ROI(); ++i)
     {
-        for(int j = xROI; j < xROI + cols; ++j)
+        for(int j = 0; j < srcImage.size2ROI(); ++j)
         {
-            perElementAddition(result,perElementSquareOfDifference(srcImage(i,j),meanValue),result);
+            varianceValue += ( (srcImage.atROI(i,j) - meanValue) * (srcImage.atROI(i,j) - meanValue) );
         }
     }
 
-    perElementDivision(result,blDataType(rows*cols - 1),result);
+    varianceValue /= blDataType(srcImage.sizeROI() - 1);
 
-    return result;
+    return varianceValue;
 }
 //-------------------------------------------------------------------
 
