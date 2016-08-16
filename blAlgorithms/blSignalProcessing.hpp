@@ -221,7 +221,7 @@ template<typename blDataType>
 
 inline void fft2(const blImage<blDataType>& srcImage,
                  blImage< std::complex<blDataType> >& dstImage,
-                 const bool& shouldfftBeDoneOnIndividualRows = false)
+                 const bool& shouldfftBeDoneOnIndividualRows)
 {
     // Let's make sure that
     // the destination image
@@ -249,7 +249,7 @@ inline void fft2(const blImage<blDataType>& srcImage,
 template<typename blDataType>
 
 inline blImage< std::complex<blDataType> > fft2(const blImage<blDataType>& srcImage,
-                                                const bool& shouldfftBeDoneOnIndividualRows = false)
+                                                const bool& shouldfftBeDoneOnIndividualRows)
 {
     blImage< std::complex<blDataType> > fft2Image(srcImage.size1ROI(),srcImage.size2ROI());
 
@@ -269,7 +269,7 @@ template<typename blDataType>
 
 inline void ifft2(const blImage< std::complex<blDataType> >& srcImage,
                   blImage<blDataType>& dstImage,
-                  const bool& shouldifftBeDoneOnIndividualRows = false)
+                  const bool& shouldifftBeDoneOnIndividualRows)
 {
     // Let's make sure that
     // the destination image
@@ -300,7 +300,7 @@ inline void ifft2(const blImage< std::complex<blDataType> >& srcImage,
 template<typename blDataType>
 
 inline blImage<blDataType> ifft2(const blImage< std::complex<blDataType> >& srcImage,
-                                 const bool& shouldifftBeDoneOnIndividualRows = false)
+                                 const bool& shouldifftBeDoneOnIndividualRows)
 {
     blImage<blDataType> ifft2Image(srcImage.size1ROI(),srcImage.size2ROI());
 
@@ -324,8 +324,8 @@ template<typename blDataType>
 
 inline void fftPowerSpectrum(const blImage< std::complex<blDataType> >& srcImage,
                              blImage<blDataType>& dstImage,
-                             const bool& shouldResultsBePlottedOnALogScale = false,
-                             const bool& shouldResultsBeNormalized = false)
+                             const bool& shouldResultsBePlottedOnALogScale,
+                             const bool& shouldResultsBeNormalized)
 {
     // We step through the source
     // image, calculate the power
@@ -381,8 +381,8 @@ inline void fftPowerSpectrum(const blImage< std::complex<blDataType> >& srcImage
 template<typename blDataType>
 
 inline blImage<blDataType> fftPowerSpectrum(const blImage< std::complex<blDataType> >& srcImage,
-                                            const bool& shouldResultsBePlottedOnALogScale = false,
-                                            const bool& shouldResultsBeNormalized = false)
+                                            const bool& shouldResultsBePlottedOnALogScale,
+                                            const bool& shouldResultsBeNormalized)
 {
     blImage<blDataType> powerSpectrumImage(srcImage.size1ROI(),srcImage.size2ROI());
 
@@ -409,8 +409,8 @@ template<typename blDataType>
 
 inline void fftFourierSpectrum(const blImage< std::complex<blDataType> >& fftComplexImage,
                                blImage<blDataType>& fourierSpectrumImage,
-                               const bool& shouldResultsBePlottedOnALogScale = false,
-                               const bool& shouldResultsBeNormalized = false)
+                               const bool& shouldResultsBePlottedOnALogScale,
+                               const bool& shouldResultsBeNormalized)
 {
     // We step through the source
     // image, calculate the fourier
@@ -469,8 +469,8 @@ inline void fftFourierSpectrum(const blImage< std::complex<blDataType> >& fftCom
 template<typename blDataType>
 
 inline blImage<blDataType> fftFourierSpectrum(const blImage< std::complex<blDataType> >& fftComplexImage,
-                                              const bool& shouldResultsBePlottedOnALogScale = false,
-                                              const bool& shouldResultsBeNormalized = false)
+                                              const bool& shouldResultsBePlottedOnALogScale,
+                                              const bool& shouldResultsBeNormalized)
 {
     blImage<blDataType> fourierSpectrum(fftComplexImage.size1ROI(),fftComplexImage.size2ROI());
 
@@ -497,8 +497,8 @@ template<typename blDataType>
 
 inline void fftPhaseAngle(const blImage< std::complex<blDataType> >& fftComplexImage,
                           blImage<blDataType>& phaseAngleImage,
-                          const bool& shouldResultsBePlottedOnALogScale = false,
-                          const bool& shouldResultsBeNormalized = false)
+                          const bool& shouldResultsBePlottedOnALogScale,
+                          const bool& shouldResultsBeNormalized)
 {
     // We step through the source
     // image, calculate the phase
@@ -556,8 +556,8 @@ inline void fftPhaseAngle(const blImage< std::complex<blDataType> >& fftComplexI
 template<typename blDataType>
 
 inline blImage<blDataType> fftPhaseAngle(const blImage< std::complex<blDataType> >& fftComplexImage,
-                                         const bool& shouldResultsBePlottedOnALogScale = false,
-                                         const bool& shouldResultsBeNormalized = false)
+                                         const bool& shouldResultsBePlottedOnALogScale,
+                                         const bool& shouldResultsBeNormalized)
 {
     blImage<blDataType> phaseAngleImg(fftComplexImage.size1ROI(),fftComplexImage.size2ROI());
 
@@ -586,9 +586,9 @@ template<typename blDataType>
 inline void fftFourierSpectrumAndPhaseAngle(const blImage< std::complex<blDataType> >& fftComplexImage,
                                             blImage<blDataType>& fourierSpectrumImage,
                                             blImage<blDataType>& phaseAngleImage,
-                                            const bool& shouldResultsBePlottedOnALogScale = false,
-                                            const bool& shouldFourierSpectrumResultsBeNormalized = false,
-                                            const bool& shouldPhaseAngleResultsBeNormalized = false)
+                                            const bool& shouldResultsBePlottedOnALogScale,
+                                            const bool& shouldFourierSpectrumResultsBeNormalized,
+                                            const bool& shouldPhaseAngleResultsBeNormalized)
 {
     // We step through the source
     // image, calculate the fourier
