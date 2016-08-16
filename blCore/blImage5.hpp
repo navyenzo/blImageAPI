@@ -190,6 +190,14 @@ inline bool blImage5<blDataType>::wrap(blDataType (&staticArray)[numOfDataPoints
 
     this->m_imageSharedPtr = blIteratorAPI::get_shared_ptr(NewImageHeader);
 
+    // We always set the ROI
+    // so that when we check the
+    // ROI we can do so very quickly
+    // without checking for
+    // pointer validity
+
+    cvSetImageROI(*this,CvRect(0,0,this->size2(),this->size1()));
+
     // We're done
 
     return true;
@@ -246,6 +254,14 @@ inline bool blImage5<blDataType>::clone(const blDataType (&staticArray)[numOfDat
             return false;
         }
     }
+
+    // We always set the ROI
+    // so that when we check the
+    // ROI we can do so very quickly
+    // without checking for
+    // pointer validity
+
+    cvSetImageROI(*this,CvRect(0,0,this->size2(),this->size1()));
 
     // Now that we have
     // the empty image
@@ -327,6 +343,14 @@ inline bool blImage5<blDataType>::wrap(blDataType (&staticArray)[numOfRows][numO
 
     this->m_imageSharedPtr = blIteratorAPI::get_shared_ptr(NewImageHeader);
 
+    // We always set the ROI
+    // so that when we check the
+    // ROI we can do so very quickly
+    // without checking for
+    // pointer validity
+
+    cvSetImageROI(*this,CvRect(0,0,this->size2(),this->size1()));
+
     // We're done
 
     return true;
@@ -377,6 +401,14 @@ inline bool blImage5<blDataType>::clone(const blDataType2 (&staticArray)[numOfRo
             return false;
         }
     }
+
+    // We always set the ROI
+    // so that when we check the
+    // ROI we can do so very quickly
+    // without checking for
+    // pointer validity
+
+    cvSetImageROI(*this,CvRect(0,0,this->size2(),this->size1()));
 
     // Now we just copy the
     // data one value at a
@@ -448,6 +480,14 @@ inline bool blImage5<blDataType>::wrap(vectorType& vectorToWrap)
 
     this->m_imageSharedPtr = blIteratorAPI::get_shared_ptr(NewImageHeader);
 
+    // We always set the ROI
+    // so that when we check the
+    // ROI we can do so very quickly
+    // without checking for
+    // pointer validity
+
+    cvSetImageROI(*this,CvRect(0,0,this->size2(),this->size1()));
+
     // We're done
 
     return true;
@@ -486,6 +526,14 @@ inline bool blImage5<blDataType>::clone(const vectorType& vectorToClone)
             return false;
         }
     }
+
+    // We always set the ROI
+    // so that when we check the
+    // ROI we can do so very quickly
+    // without checking for
+    // pointer validity
+
+    cvSetImageROI(*this,CvRect(0,0,this->size2(),this->size1()));
 
     // Now we just copy the
     // data one value at a
