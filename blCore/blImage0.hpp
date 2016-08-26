@@ -95,6 +95,14 @@ public: // Overloaded operators
     blDataType&                             circ_at(const int& imageElementIndex);
     const blDataType&                       circ_at(const int& imageElementIndex)const;
 
+    // Functions used to
+    // get the data index
+    // based on circular
+    // lookup
+
+    int                                     getDataIndex_circ_at(const int& imageElementIndex)const;
+    int                                     getDataIndex_circ_at(const int& rowIndex,const int& colIndex)const;
+
     // Operators used to
     // convert this image
     // to an IplImage pointer
@@ -389,11 +397,10 @@ inline const blDataType& blImage0<blDataType>::circ_at(const int& rowIndex,
 template<typename blDataType>
 inline blDataType& blImage0<blDataType>::circ_at(const int& imageElementIndex)
 {
-    if(this->size() == 0)
-        return ( (*this)[0][0] );
-
     if(imageElementIndex < 0)
+    {
         return (*this)(this->size() + imageElementIndex % this->size());
+    }
     else
         return (*this)(imageElementIndex % this->size());
 }
@@ -404,17 +411,51 @@ inline blDataType& blImage0<blDataType>::circ_at(const int& imageElementIndex)
 template<typename blDataType>
 inline const blDataType& blImage0<blDataType>::circ_at(const int& imageElementIndex)const
 {
-    if(this->size() == 0)
-        return ( (*this)[0][0] );
-
     if(imageElementIndex < 0)
     {
-        auto imageSize = this->size();
-
-        return (*this)(imageSize + imageElementIndex % imageSize);
+        return (*this)(this->size() + imageElementIndex % this->size());
     }
     else
         return (*this)(imageElementIndex % this->size());
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline int blImage0<blDataType>::getDataIndex_circ_at(const int& rowIndex,const int& colIndex)const
+{
+    auto rows = this->size1();
+    auto cols = this->size2();
+
+    if(rowIndex < 0)
+    {
+        if(colIndex < 0)
+            return ( (rows + rowIndex % rows) * cols + (cols + colIndex % cols) );
+        else
+            return ( (rows + rowIndex % rows) * cols + (colIndex % cols) );
+    }
+    else
+    {
+        if(colIndex < 0)
+            return ( (rowIndex % rows) * cols + (cols + colIndex % cols) );
+        else
+            return ( (rowIndex % rows) * cols + (colIndex % cols) );
+    }
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline int blImage0<blDataType>::getDataIndex_circ_at(const int& imageElementIndex)const
+{
+    if(imageElementIndex < 0)
+    {
+        return (this->size() + imageElementIndex % this->size());
+    }
+    else
+        return (imageElementIndex % this->size());
 }
 //-------------------------------------------------------------------
 

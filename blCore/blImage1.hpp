@@ -41,10 +41,10 @@ class blImage1 : public blImage0<blDataType>
 {
 public: // Public typedefs
 
-    typedef blIteratorAPI::blRawIterator<blDataType>                    iterator;
-    typedef blIteratorAPI::blRawIterator<const blDataType>              const_iterator;
-    typedef blIteratorAPI::blRawReverseIterator<blDataType>             reverse_iterator;
-    typedef blIteratorAPI::blRawReverseIterator<const blDataType>       const_reverse_iterator;
+    typedef blImageIterator<blDataType>                                 iterator;
+    typedef blImageIterator<const blDataType>                           const_iterator;
+    typedef blImageReverseIterator<blDataType>                          reverse_iterator;
+    typedef blImageReverseIterator<const blDataType>                    const_reverse_iterator;
 
 public: // Constructors and destructors
 
