@@ -134,29 +134,28 @@ public:
             return false;
     }
 
-    bool                                        operator==(const blImageCircularIterator<blDataType>& imageIterator)const{return (m_ptr == imageIterator.getConstPtr());}
-    bool                                        operator!=(const blImageCircularIterator<blDataType>& imageIterator)const{return (m_ptr != imageIterator.getConstPtr());}
+    bool                                        operator==(const blImageCircularIterator<blDataType>& imageIterator)const{return (this->m_image == imageIterator.getImage());}
+    bool                                        operator!=(const blImageCircularIterator<blDataType>& imageIterator)const{return (this->m_image != imageIterator.getImage());}
 
-    blImageIterator<blDataType>&                operator+=(const ptrdiff_t& movement){m_ptr += movement;return (*this);}
-    blImageIterator<blDataType>&                operator-=(const ptrdiff_t& movement){m_ptr -= movement;return (*this);}
-    blImageIterator<blDataType>&                operator++(){++m_ptr;return (*this);}
-    blImageIterator<blDataType>&                operator--(){--m_ptr;return (*this);}
-    blImageIterator<blDataType>                 operator++(int){auto temp(*this);++m_ptr;return temp;}
-    blImageIterator<blDataType>                 operator--(int){auto temp(*this);--m_ptr;return temp;}
-    blImageIterator<blDataType>                 operator+(const ptrdiff_t& movement){auto oldPtr = m_ptr;m_ptr+=movement;auto temp(*this);m_ptr = oldPtr;return temp;}
-    blImageIterator<blDataType>                 operator-(const ptrdiff_t& movement){auto oldPtr = m_ptr;m_ptr-=movement;auto temp(*this);m_ptr = oldPtr;return temp;}
+    blImageIterator<blDataType>&                operator+=(const ptrdiff_t& movement){this->m_index += movement;return (*this);}
+    blImageIterator<blDataType>&                operator-=(const ptrdiff_t& movement){this->m_index -= movement;return (*this);}
+    blImageIterator<blDataType>&                operator++(){++this->m_index;return (*this);}
+    blImageIterator<blDataType>&                operator--(){--this->m_index;return (*this);}
+    blImageIterator<blDataType>                 operator++(int){auto temp(*this);++this->index;return temp;}
+    blImageIterator<blDataType>                 operator--(int){auto temp(*this);--this->m_index;return temp;}
+    blImageIterator<blDataType>                 operator+(const ptrdiff_t& movement){auto oldIndex = this->m_index;this->m_index+=movement;auto temp(*this);this->m_index = oldIndex;return temp;}
+    blImageIterator<blDataType>                 operator-(const ptrdiff_t& movement){auto oldIndex = this->m_index;this->m_index-=movement;auto temp(*this);this->m_index = oldIndex;return temp;}
 
-    ptrdiff_t                                   operator-(const blImageIterator<blDataType>& imageIterator){return std::distance(imageIterator.getPtr(),this->getPtr());}
+    ptrdiff_t                                   operator-(const blImageIterator<blDataType>& imageIterator){return std::distance(imageIterator.getIndex(),this->getIndex());}
 
-    blDataType&                                 operator*(){return *m_ptr;}
-    const blDataType&                           operator*()const{return *m_ptr;}
-    blDataType*                                 operator->(){return m_ptr;}
+    blDataType&                                 operator*(){return this->m_image.circ_at(this->m_index);}
+    const blDataType&                           operator*()const{return this->m_image.circ_at(this->m_index);}
+    blDataType*                                 operator->(){return &this->m_image->circ_at(this->m_index);}
 
-    blDataType*                                 getPtr()const{return m_ptr;}
-    const blDataType*                           getConstPtr()const{return m_ptr;}
+    ptrdiff_t                                   getIndex()const{return this->m_index;}
 
-    blImage<blDataType>&                        getImage(){return m_image;}
-    const blImage<blDataType>&                  getImage()const{return m_image;}
+    blImage0<blDataType>&                       getImage(){return m_image;}
+    const blImage0<blDataType>&                 getImage()const{return m_image;}
 
 
 
@@ -169,7 +168,7 @@ public:
 
 protected:
 
-    blImage<blDataType>                         m_image;
+    blImage0<blDataType>                        m_image;
     ptrdiff_t                                   m_index;
 
 };

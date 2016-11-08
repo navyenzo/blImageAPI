@@ -46,6 +46,10 @@ public: // Public typedefs
     typedef blImageReverseIterator<blDataType>                          reverse_iterator;
     typedef blImageReverseIterator<const blDataType>                    const_reverse_iterator;
 
+    typedef blImageCircularIterator<const blDataType>                    circ_iterator;
+    typedef blImageCircularIterator<const blDataType>                    const_circ_iterator;
+
+
 public: // Constructors and destructors
 
     // Default constructor
@@ -81,6 +85,9 @@ public: // Iterator functions
 
     const_reverse_iterator                  crbegin()const;
     const_reverse_iterator                  crend()const;
+
+    circ_iterator                           circ_begin();
+    circ_iterator                           circ_end();
 };
 //-------------------------------------------------------------------
 
