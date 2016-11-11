@@ -46,9 +46,6 @@ public: // Public typedefs
     typedef blImageReverseIterator<blDataType>                          reverse_iterator;
     typedef blImageReverseIterator<const blDataType>                    const_reverse_iterator;
 
-    typedef blImageCircularIterator<const blDataType>                    circ_iterator;
-    typedef blImageCircularIterator<const blDataType>                    const_circ_iterator;
-
 
 public: // Constructors and destructors
 
@@ -85,9 +82,6 @@ public: // Iterator functions
 
     const_reverse_iterator                  crbegin()const;
     const_reverse_iterator                  crend()const;
-
-    circ_iterator                           circ_begin();
-    circ_iterator                           circ_end();
 };
 //-------------------------------------------------------------------
 
@@ -113,10 +107,7 @@ inline blImage1<blDataType>::blImage1(const blImage1<blDataType>& Image1)
 template<typename blDataType>
 inline typename blImage1<blDataType>::iterator blImage1<blDataType>::begin()
 {
-    if(this->size() > 0)
-        return ( &(*this)(0) );
-    else
-        return NULL;
+    return ( &(*this)(0) );
 }
 //-------------------------------------------------------------------
 
@@ -125,10 +116,7 @@ inline typename blImage1<blDataType>::iterator blImage1<blDataType>::begin()
 template<typename blDataType>
 inline typename blImage1<blDataType>::iterator blImage1<blDataType>::end()
 {
-    if(this->size() > 0)
-        return ( &(*this)(this->size()) );
-    else
-        return NULL;
+    return ( &(*this)(this->size()) );
 }
 //-------------------------------------------------------------------
 
@@ -137,10 +125,7 @@ inline typename blImage1<blDataType>::iterator blImage1<blDataType>::end()
 template<typename blDataType>
 inline typename blImage1<blDataType>::const_iterator blImage1<blDataType>::cbegin()const
 {
-    if(this->size() > 0)
-        return ( &(*this)(0) );
-    else
-        return NULL;
+    return ( &(*this)(0) );
 }
 //-------------------------------------------------------------------
 
@@ -149,10 +134,7 @@ inline typename blImage1<blDataType>::const_iterator blImage1<blDataType>::cbegi
 template<typename blDataType>
 inline typename blImage1<blDataType>::const_iterator blImage1<blDataType>::cend()const
 {
-    if(this->size() > 0)
-        return ( &(*this)(this->size()) );
-    else
-        return NULL;
+    return ( &(*this)(this->size()) );
 }
 //-------------------------------------------------------------------
 
@@ -161,10 +143,7 @@ inline typename blImage1<blDataType>::const_iterator blImage1<blDataType>::cend(
 template<typename blDataType>
 inline typename blImage1<blDataType>::reverse_iterator blImage1<blDataType>::rbegin()
 {
-    if(this->size() > 0)
-        return ( &(*this)(this->size() - 1) );
-    else
-        return NULL;
+    return ( &(*this)(this->size() - 1) );
 }
 //-------------------------------------------------------------------
 
@@ -173,10 +152,7 @@ inline typename blImage1<blDataType>::reverse_iterator blImage1<blDataType>::rbe
 template<typename blDataType>
 inline typename blImage1<blDataType>::reverse_iterator blImage1<blDataType>::rend()
 {
-    if(this->size() > 0)
-        return ( &(*this)(0) - 1);
-    else
-        return NULL;
+    return ( &(*this)(0) - 1);
 }
 //-------------------------------------------------------------------
 
@@ -185,10 +161,7 @@ inline typename blImage1<blDataType>::reverse_iterator blImage1<blDataType>::ren
 template<typename blDataType>
 inline typename blImage1<blDataType>::const_reverse_iterator blImage1<blDataType>::crbegin()const
 {
-    if(this->size() > 0)
-        return ( &(*this)(this->size() - 1) );
-    else
-        return NULL;
+    return ( &(*this)(this->size() - 1) );
 }
 //-------------------------------------------------------------------
 
@@ -197,10 +170,7 @@ inline typename blImage1<blDataType>::const_reverse_iterator blImage1<blDataType
 template<typename blDataType>
 inline typename blImage1<blDataType>::const_reverse_iterator blImage1<blDataType>::crend()const
 {
-    if(this->size() > 0)
-        return ( &(*this)(0) - 1);
-    else
-        return NULL;
+    return ( &(*this)(0) - 1);
 }
 //-------------------------------------------------------------------
 

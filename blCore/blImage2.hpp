@@ -7,11 +7,11 @@
 // CLASS:           blImage2
 // BASE CLASS:      blImage1
 //
-// PURPOSE:         Based on blImage1, this class adds functions
-//                  used to create a new image of a specified size
-//                  and to initialize it to a specified value
-//                  It also adds functions to handle ROIs (Regions
-//                  Of Interest)
+// PURPOSE:         - Based on blImage1, this class adds functions
+//                    used to create a new image of a specified size
+//                    and to initialize it to a specified value
+//                  - It also adds functions to handle ROIs (Regions
+//                    Of Interest)
 //
 // AUTHOR:          Vincenzo Barbato
 //                  http://www.barbatolabs.com
@@ -109,6 +109,14 @@ public: // Public functions
 
     blDataType&                             circ_atROI(const int& imageElementIndex);
     const blDataType&                       circ_atROI(const int& imageElementIndex)const;
+
+    // Functions used to
+    // get the data index
+    // based on circular
+    // lookup
+
+    int                                     getDataIndex_circ_atROI(const int& imageElementIndex)const;
+    int                                     getDataIndex_circ_atROI(const int& rowIndex,const int& colIndex)const;
 
     // Function used to get
     // whether an index points
@@ -499,6 +507,45 @@ inline const blDataType& blImage2<blDataType>::circ_atROI(const int& imageElemen
         return ( this->atROI(this->sizeROI() + imageElementIndex % this->sizeROI()) );
     else
         return ( this->atROI(imageElementIndex % this->sizeROI()) );
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline int blImage2<blDataType>::getDataIndex_circ_atROI(const int& rowIndex,const int& colIndex)const
+{
+    auto rows = this->size1ROI();
+    auto cols = this->size2ROI();
+
+    if(rowIndex < 0)
+    {
+        if(colIndex < 0)
+            return ( (rows + rowIndex % rows) * cols + (cols + colIndex % cols) );
+        else
+            return ( (rows + rowIndex % rows) * cols + (colIndex % cols) );
+    }
+    else
+    {
+        if(colIndex < 0)
+            return ( (rowIndex % rows) * cols + (cols + colIndex % cols) );
+        else
+            return ( (rowIndex % rows) * cols + (colIndex % cols) );
+    }
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline int blImage2<blDataType>::getDataIndex_circ_atROI(const int& imageElementIndex)const
+{
+    if(imageElementIndex < 0)
+    {
+        return (this->sizeROI() + imageElementIndex % this->sizeROI());
+    }
+    else
+        return (imageElementIndex % this->sizeROI());
 }
 //-------------------------------------------------------------------
 
