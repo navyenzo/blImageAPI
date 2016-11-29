@@ -95,10 +95,10 @@ public:
     blImageReverseIterator<blDataType>&         operator--(){++this->m_ptr;return (*this);}
     blImageReverseIterator<blDataType>          operator++(int){auto temp(*this);--this->m_ptr;return temp;}
     blImageReverseIterator<blDataType>          operator--(int){auto temp(*this);++this->m_ptr;return temp;}
-    blImageReverseIterator<blDataType>          operator+(const int& movement){auto oldPtr = this->m_ptr;this->m_ptr-=movement;auto temp(*this);this->m_ptr = oldPtr;return temp;}
-    blImageReverseIterator<blDataType>          operator-(const int& movement){auto oldPtr = this->m_ptr;this->m_ptr+=movement;auto temp(*this);this->m_ptr = oldPtr;return temp;}
+    blImageReverseIterator<blDataType>          operator+(const int& movement)const{auto oldPtr = this->m_ptr;this->m_ptr-=movement;auto temp(*this);this->m_ptr = oldPtr;return temp;}
+    blImageReverseIterator<blDataType>          operator-(const int& movement)const{auto oldPtr = this->m_ptr;this->m_ptr+=movement;auto temp(*this);this->m_ptr = oldPtr;return temp;}
 
-    ptrdiff_t                                   operator-(const blImageReverseIterator<blDataType>& imageReverseIterator){return std::distance(this->getPtr(),imageReverseIterator.getPtr());}
+    ptrdiff_t                                   operator-(const blImageReverseIterator<blDataType>& imageReverseIterator)const{return std::distance(this->getPtr(),imageReverseIterator.getPtr());}
 
     blImageReverseIterator<blDataType>          base(){blImageIterator<blDataType> forwardIterator(this->m_ptr); ++forwardIterator; return forwardIterator;}
 };
