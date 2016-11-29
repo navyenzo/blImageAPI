@@ -99,21 +99,6 @@ namespace blImageAPI
 
     #include "blCore/blImageIterators.hpp"
 
-    // This file defines circular forward and
-    // reverse random access iterators to allow
-    // the use of blImage as a circular buffer
-    // in stl algorithms used to deal with
-    // non-circular buffers
-    // For example, a programmer could let an
-    // stl algorithm transverse a blImage n times
-    // until it reaches the "end"
-    // These iterators could also be used to let
-    // stl algorithm transverse the ROI of an image
-    // that is a subset of an image simply by
-    // passing it these circular iterators
-
-    #include "blCore/blImageCircularIterators.hpp"
-
 
 
     // Based on blImage0, this class adds linear,
@@ -131,6 +116,23 @@ namespace blImageAPI
     // and to initialize it to a specified value
 
     #include "blCore/blImage2.hpp"
+
+
+
+    // This file defines circular forward and
+    // reverse random access iterators to allow
+    // the use of blImage as a circular buffer
+    // in stl algorithms used to deal with
+    // non-circular buffers
+    // For example, a programmer could let an
+    // stl algorithm transverse a blImage n times
+    // until it reaches the "end"
+    // These iterators could also be used to let
+    // stl algorithm transverse the ROI of an image
+    // that is a subset of an image simply by
+    // passing it these circular iterators
+
+    #include "blCore/blImageCircularIterators.hpp"
 
 
 

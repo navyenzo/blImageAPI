@@ -53,10 +53,10 @@ public:
     blImageIterator<blDataType>&                operator--(){--m_ptr;return (*this);}
     blImageIterator<blDataType>                 operator++(int){auto temp(*this);++m_ptr;return temp;}
     blImageIterator<blDataType>                 operator--(int){auto temp(*this);--m_ptr;return temp;}
-    blImageIterator<blDataType>                 operator+(const ptrdiff_t& movement){auto oldPtr = m_ptr;m_ptr+=movement;auto temp(*this);m_ptr = oldPtr;return temp;}
-    blImageIterator<blDataType>                 operator-(const ptrdiff_t& movement){auto oldPtr = m_ptr;m_ptr-=movement;auto temp(*this);m_ptr = oldPtr;return temp;}
+    blImageIterator<blDataType>                 operator+(const ptrdiff_t& movement)const{auto temp(*this);temp += movement;return temp;}
+    blImageIterator<blDataType>                 operator-(const ptrdiff_t& movement)const{auto temp(*this);temp -= movement;return temp;}
 
-    ptrdiff_t                                   operator-(const blImageIterator<blDataType>& imageIterator){return std::distance(imageIterator.getPtr(),this->getPtr());}
+    ptrdiff_t                                   operator-(const blImageIterator<blDataType>& imageIterator)const{return std::distance(imageIterator.getPtr(),this->getPtr());}
 
     blDataType&                                 operator*(){return *m_ptr;}
     const blDataType&                           operator*()const{return *m_ptr;}

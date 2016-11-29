@@ -2181,7 +2181,7 @@ template<typename blDataType>
 inline blDataType norm(const blImage<blDataType>& srcImg1,
                        const int& normType = cv::NORM_L2)
 {
-    blDataType normValue;
+    blDataType normValue = static_cast<blDataType>(0);
 
     calculateNorm(srcImg1,normValue,normType);
 
