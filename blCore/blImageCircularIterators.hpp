@@ -3,24 +3,36 @@
 
 
 //-------------------------------------------------------------------
+// FILE:            blImageCircularIterator.hpp
+// CLASS:           blImageCircularIterator
+// BASE CLASS:      None
+//
+// PURPOSE:         - Defines a simple random access circular iterator
+//                    to allow the use of blImage variables (used as
+//                    circular buffers) in stl algorithms
+//                  - It uses a "maxNumberOfCirculations" variables that
+//                    allows the circular buffer to be used in stl
+//                    algorithms because once the iterator ciculates past
+//                    the set limit, it ends
+//
+// AUTHOR:          Vincenzo Barbato
+//                  http://www.barbatolabs.com
+//                  navyenzo@gmail.com
+//
+// LISENSE:         MIT-LICENCE
+//                  http://www.opensource.org/licenses/mit-license.php
+//
+// DEPENDENCIES:    <iterator>
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
 // Includes and libs needed for this file
 //-------------------------------------------------------------------
 #include <iterator>
 //-------------------------------------------------------------------
 
 
-//-------------------------------------------------------------------
-// The following classes define custom
-// circular iterators that can be used
-// with our image class so that an stl
-// algorithm could run though our image
-// in a circular way and stop after so
-// many times it has gone around
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-// A forward moving circular iterator for our images
 //-------------------------------------------------------------------
 template<typename blDataType>
 class blImageCircularIterator : public std::iterator<std::random_access_iterator_tag,
@@ -65,21 +77,21 @@ public: // Overloaded operators
 
     // Comparator operators
 
-    bool                                        operator==(const blImageCircularIterator<blDataType>& imageIterator)const;
-    bool                                        operator!=(const blImageCircularIterator<blDataType>& imageIterator)const;
+    bool                                        operator==(const blImageCircularIterator<blDataType>& imageCircularIterator)const;
+    bool                                        operator!=(const blImageCircularIterator<blDataType>& imageCircularIterator)const;
 
     // Arithmetic operators
 
-    blImageIterator<blDataType>&                operator+=(const int& movement);
-    blImageIterator<blDataType>&                operator-=(const int& movement);
-    blImageIterator<blDataType>&                operator++();
-    blImageIterator<blDataType>&                operator--();
-    blImageIterator<blDataType>                 operator++(int);
-    blImageIterator<blDataType>                 operator--(int);
-    blImageIterator<blDataType>                 operator+(const int& movement)const;
-    blImageIterator<blDataType>                 operator-(const int& movement)const;
+    blImageCircularIterator<blDataType>&        operator+=(const int& movement);
+    blImageCircularIterator<blDataType>&        operator-=(const int& movement);
+    blImageCircularIterator<blDataType>&        operator++();
+    blImageCircularIterator<blDataType>&        operator--();
+    blImageCircularIterator<blDataType>         operator++(int);
+    blImageCircularIterator<blDataType>         operator--(int);
+    blImageCircularIterator<blDataType>         operator+(const int& movement)const;
+    blImageCircularIterator<blDataType>         operator-(const int& movement)const;
 
-    int                                         operator-(const blImageIterator<blDataType>& imageIterator)const;
+    int                                         operator-(const blImageCircularIterator<blDataType>& imageCircularIterator)const;
 
     blDataType&                                 operator*();
     const blDataType&                           operator*()const;
@@ -101,7 +113,7 @@ public: // Public functions
     // iterator is pointing at
 
     void                                        setDataIndex(const int& dataIndex);
-    void                                        setRowAndColIndeces(const int& rowIndex,const int& colIndex);
+    void                                        setDataIndex(const int& rowIndex,const int& colIndex);
 
     // Special function used to
     // calculate how many times
@@ -110,7 +122,7 @@ public: // Public functions
     // (Could be negative when circling
     // in the reverse direction)
 
-    const int&                                  getCurrentNumberOfCirculations()const;
+    int                                         getCurrentNumberOfCirculations()const;
 
 private: // Private variables
 
@@ -150,7 +162,7 @@ inline blImageCircularIterator<blDataType>::blImageCircularIterator(blImage2<blD
 
     setDataIndex(dataIndex);
 
-    m_maxNumberOfCirculations = maxNumberOfCirculations;
+    m_maxNumberOfCirculations = std::abs(maxNumberOfCirculations);
 }
 //-------------------------------------------------------------------
 
@@ -164,9 +176,9 @@ inline blImageCircularIterator<blDataType>::blImageCircularIterator(blImage2<blD
 {
     m_image = image;
 
-    setRowAndColIndeces(rowIndex,colIndex);
+    setDataIndex(rowIndex,colIndex);
 
-    m_maxNumberOfCirculations = maxNumberOfCirculations;
+    m_maxNumberOfCirculations = std::abs(maxNumberOfCirculations);
 }
 //-------------------------------------------------------------------
 
@@ -189,6 +201,14 @@ inline blImageCircularIterator<blDataType>::blImageCircularIterator(const blImag
 
 //-------------------------------------------------------------------
 template<typename blDataType>
+inline blImageCircularIterator<blDataType>::~blImageCircularIterator()
+{
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
 inline void blImageCircularIterator<blDataType>::setDataIndex(const int& dataIndex)
 {
     // First we just set the
@@ -204,8 +224,8 @@ inline void blImageCircularIterator<blDataType>::setDataIndex(const int& dataInd
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline void blImageCircularIterator<blDataType>::setRowAndColIndeces(const int& rowIndex,
-                                                                     const int& colIndex)
+inline void blImageCircularIterator<blDataType>::setDataIndex(const int& rowIndex,
+                                                              const int& colIndex)
 {
     setDataIndex(m_image.getDataIndex_circ_atROI(rowIndex,colIndex));
 }
@@ -250,7 +270,16 @@ inline const int& blImageCircularIterator<blDataType>::getMaxNumberOfCirculation
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline const int& blImageCircularIterator<blDataType>::getCurrentNumberOfCirculations()const
+inline const int& blImageCircularIterator<blDataType>::getStartIndex()const
+{
+    return m_startIndex;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline int blImageCircularIterator<blDataType>::getCurrentNumberOfCirculations()const
 {
     // We have to calculate how many times
     // we have gone around and passed the
@@ -267,35 +296,23 @@ inline const int& blImageCircularIterator<blDataType>::getCurrentNumberOfCircula
     // (Again this number could be negative)
 
     int numberOfCirculations = distanceIteratorHasMoved % m_image.sizeROI();
+
+    return numberOfCirculations;
 }
 //-------------------------------------------------------------------
 
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline bool blImageCircularIterator<blDataType>::operator==(const blImageCircularIterator<blDataType>& imageIterator)const
+inline bool blImageCircularIterator<blDataType>::operator==(const blImageCircularIterator<blDataType>& imageCircularIterator)const
 {
-    if(this->m_image != imageIterator.getImage)
+    if(m_image != imageCircularIterator.getImage())
         return false;
-    else if(this->m_startIndex != imageIterator.getStartIndex())
-        return false;
-    else if(this->m_dataIndex != imageIterator.getDataIndex())
-        return false;
-    else
-        return true;
-}
-//-------------------------------------------------------------------
 
+    if(m_image.getDataIndex_circ_atROI(m_dataIndex) != imageCircularIterator.getImage().getDataIndex_circ_atROI(imageCircularIterator.getDataIndex()))
+        return false;
 
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline bool blImageCircularIterator<blDataType>::operator!=(const blImageCircularIterator<blDataType>& imageIterator)const
-{
-    if(this->m_image != imageIterator.getImage)
-        return true;
-    else if(this->m_startIndex != imageIterator.getStartIndex())
-        return true;
-    else if(this->m_dataIndex != imageIterator.getDataIndex())
+    if(getCurrentNumberOfCirculations() < m_maxNumberOfCirculations && imageCircularIterator.getCurrentNumberOfCirculations() < imageCircularIterator.getMaxNumberOfCirculations())
         return true;
     else
         return false;
@@ -305,7 +322,16 @@ inline bool blImageCircularIterator<blDataType>::operator!=(const blImageCircula
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operator+=(const int& movement)
+inline bool blImageCircularIterator<blDataType>::operator!=(const blImageCircularIterator<blDataType>& imageCircularIterator)const
+{
+    return !((*this) == imageCircularIterator);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageCircularIterator<blDataType>& blImageCircularIterator<blDataType>::operator+=(const int& movement)
 {
     m_dataIndex += movement;
 
@@ -316,7 +342,7 @@ inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operato
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operator-=(const int& movement)
+inline blImageCircularIterator<blDataType>& blImageCircularIterator<blDataType>::operator-=(const int& movement)
 {
     m_dataIndex -= movement;
 
@@ -327,7 +353,7 @@ inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operato
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operator++()
+inline blImageCircularIterator<blDataType>& blImageCircularIterator<blDataType>::operator++()
 {
     ++m_dataIndex;
 
@@ -338,7 +364,7 @@ inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operato
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operator--()
+inline blImageCircularIterator<blDataType>& blImageCircularIterator<blDataType>::operator--()
 {
     --m_dataIndex;
 
@@ -349,7 +375,7 @@ inline blImageIterator<blDataType>& blImageCircularIterator<blDataType>::operato
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator++(int)
+inline blImageCircularIterator<blDataType> blImageCircularIterator<blDataType>::operator++(int)
 {
     auto temp(*this);
 
@@ -362,7 +388,7 @@ inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator--(int)
+inline blImageCircularIterator<blDataType> blImageCircularIterator<blDataType>::operator--(int)
 {
     auto temp(*this);
 
@@ -375,7 +401,7 @@ inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator+(const int& movement)const
+inline blImageCircularIterator<blDataType> blImageCircularIterator<blDataType>::operator+(const int& movement)const
 {
     auto temp(*this);
 
@@ -388,7 +414,7 @@ inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator-(const int& movement)const
+inline blImageCircularIterator<blDataType> blImageCircularIterator<blDataType>::operator-(const int& movement)const
 {
     auto temp(*this);
 
@@ -401,9 +427,9 @@ inline blImageIterator<blDataType> blImageCircularIterator<blDataType>::operator
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline int blImageCircularIterator<blDataType>::operator-(const blImageIterator<blDataType>& imageIterator)const
+inline int blImageCircularIterator<blDataType>::operator-(const blImageCircularIterator<blDataType>& imageCircularIterator)const
 {
-    return ( (m_dataIndex - m_startIndex) - (imageIterator.getDataIndex() - imageIterator.getStartIndex()) );
+    return ( (m_dataIndex - m_startIndex) - (imageCircularIterator.getDataIndex() - imageCircularIterator.getStartIndex()) );
 }
 //-------------------------------------------------------------------
 
@@ -435,10 +461,11 @@ inline blDataType* blImageCircularIterator<blDataType>::operator->()
     // "end" iterator, otherwise we return
     // the correct iterator
 
-    if(getCurrentNumberOfCirculations() >= m_maxNumberOfCirculations)
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
     {
         auto ROIRectangle = m_image.getROI();
-        return ( &m_image[ROIRectangle.p2.y][ROIRectangle.p2.x] );
+
+        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
     }
     else
     {

@@ -22,9 +22,6 @@
 // DEPENDENCIES:    blImage4 and all its dependencies
 //
 // NOTES:
-//
-// DATE CREATED:    Jan/30/2012
-// DATE UPDATED:
 //-------------------------------------------------------------------
 
 

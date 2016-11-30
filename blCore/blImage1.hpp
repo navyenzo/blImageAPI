@@ -22,10 +22,6 @@
 //                  - blIteratorAPI and all its dependencies
 //
 // NOTES:
-//
-// DATE CREATED:    Jan/18/2012
-//
-// DATE UPDATED:
 //-------------------------------------------------------------------
 
 

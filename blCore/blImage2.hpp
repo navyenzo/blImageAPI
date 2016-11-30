@@ -12,6 +12,8 @@
 //                    and to initialize it to a specified value
 //                  - It also adds functions to handle ROIs (Regions
 //                    Of Interest)
+//                  - It also adds random access forward and reverse
+//                    begin/end iterators
 //
 // AUTHOR:          Vincenzo Barbato
 //                  http://www.barbatolabs.com
@@ -23,10 +25,6 @@
 // DEPENDENCIES:    blImage1 and all its dependencies
 //
 // NOTES:
-//
-// DATE CREATED:    Jan/24/2012
-//
-// DATE UPDATED:
 //-------------------------------------------------------------------
 
 
@@ -125,23 +123,6 @@ public: // Public functions
 
     bool                                    doesIndexPointToPixelInImageROI(const int& rowIndex,
                                                                             const int& colIndex)const;
-
-    // Functions used to
-    // get iterators to
-    // the beginning and
-    // end of the ROI
-
-    iterator                                begin_ROI();
-    iterator                                end_ROI();
-
-    const_iterator                          cbegin_ROI()const;
-    const_iterator                          cend_ROI()const;
-
-    reverse_iterator                        rbegin_ROI();
-    reverse_iterator                        rend_ROI();
-
-    const_reverse_iterator                  crbegin_ROI()const;
-    const_reverse_iterator                  crend_ROI()const;
 
     // Functions used to
     // get the size of the
@@ -827,86 +808,6 @@ inline void blImage2<blDataType>::setROIheightAndwidth(const int& height,
     ROIRect.width = width;
 
     this->setROI(ROIRect,shouldImageBeResizedToAccomodateForBiggerROI);
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::iterator blImage2<blDataType>::begin_ROI()
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p1.y][ROIRectangle.p1.x] );
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::iterator blImage2<blDataType>::end_ROI()
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p2.y][ROIRectangle.p2.x] );
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::const_iterator blImage2<blDataType>::cbegin_ROI()const
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p1.y][ROIRectangle.p1.x] );
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::const_iterator blImage2<blDataType>::cend_ROI()const
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p2.y][ROIRectangle.p2.x] );
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::reverse_iterator blImage2<blDataType>::rbegin_ROI()
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p2.y][ROIRectangle.p2.x] - 1 );
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::reverse_iterator blImage2<blDataType>::rend_ROI()
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p1.y][ROIRectangle.p1.x] - 1 );
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::const_reverse_iterator blImage2<blDataType>::crbegin_ROI()const
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p2.y][ROIRectangle.p2.x] - 1 );
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline typename blImage2<blDataType>::const_reverse_iterator blImage2<blDataType>::crend_ROI()const
-{
-    auto ROIRectangle = this->getROI();
-    return ( &(*this)[ROIRectangle.p1.y][ROIRectangle.p1.x] - 1 );
 }
 //-------------------------------------------------------------------
 

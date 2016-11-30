@@ -20,9 +20,6 @@
 // DEPENDENCIES:    blImage3 and all its dependencies
 //
 // NOTES:
-//
-// DATE CREATED:    Jan/24/2012
-// DATE UPDATED:
 //-------------------------------------------------------------------
 
 

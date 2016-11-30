@@ -28,9 +28,6 @@
 // DEPENDENCIES:    blImage5 and all its dependencies
 //
 // NOTES:
-//
-// DATE CREATED:    Feb/01/2012
-// DATE UPDATED:
 //-------------------------------------------------------------------
 
 

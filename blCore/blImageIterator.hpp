@@ -3,22 +3,31 @@
 
 
 //-------------------------------------------------------------------
+// FILE:            blImageIterator.hpp
+// CLASS:           blImageIterator
+// BASE CLASS:      None
+//
+// PURPOSE:         Defines a simple random access iterator to allow
+//                  the use of blImage variables in stl algorithms
+//
+// AUTHOR:          Vincenzo Barbato
+//                  http://www.barbatolabs.com
+//                  navyenzo@gmail.com
+//
+// LISENSE:         MIT-LICENCE
+//                  http://www.opensource.org/licenses/mit-license.php
+//
+// DEPENDENCIES:    <iterator>
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
 // Includes and libs needed for this file
 //-------------------------------------------------------------------
 #include <iterator>
 //-------------------------------------------------------------------
 
 
-//-------------------------------------------------------------------
-// The following classes define basic forward
-// and reverse ransom access iterators to
-// allow the use of blImage class in stl
-// algorithms
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-// A forward moving random iterator
 //-------------------------------------------------------------------
 template<typename blDataType>
 class blImageIterator : public std::iterator<std::random_access_iterator_tag,
@@ -29,12 +38,27 @@ class blImageIterator : public std::iterator<std::random_access_iterator_tag,
 {
 public:
 
-    blImageIterator(blDataType* ptr = nullptr){m_ptr = ptr;}
+    // Default constructor
+
+    blImageIterator(blDataType* ptr = nullptr);
+
+    // Copy constructor
+
     blImageIterator(const blImageIterator<blDataType>& imageIterator) = default;
+
+    // Destructor
+
     ~blImageIterator(){}
 
+public: // Assignment operators
+
     blImageIterator<blDataType>&                operator=(const blImageIterator<blDataType>& imageIterator) = default;
-    blImageIterator<blDataType>&                operator=(blDataType* ptr){m_ptr = ptr;return (*this);}
+    blImageIterator<blDataType>&                operator=(blDataType* ptr);
+
+public: // Public functions
+
+    // Overloaded boolean operator to
+    // act like a normal pointer
 
     operator                                    bool()const
     {
@@ -44,28 +68,42 @@ public:
             return false;
     }
 
-    bool                                        operator==(const blImageIterator<blDataType>& imageIterator)const{return (m_ptr == imageIterator.getConstPtr());}
-    bool                                        operator!=(const blImageIterator<blDataType>& imageIterator)const{return (m_ptr != imageIterator.getConstPtr());}
+    // Overloaded equality/inequality operators
 
-    blImageIterator<blDataType>&                operator+=(const ptrdiff_t& movement){m_ptr += movement;return (*this);}
-    blImageIterator<blDataType>&                operator-=(const ptrdiff_t& movement){m_ptr -= movement;return (*this);}
-    blImageIterator<blDataType>&                operator++(){++m_ptr;return (*this);}
-    blImageIterator<blDataType>&                operator--(){--m_ptr;return (*this);}
-    blImageIterator<blDataType>                 operator++(int){auto temp(*this);++m_ptr;return temp;}
-    blImageIterator<blDataType>                 operator--(int){auto temp(*this);--m_ptr;return temp;}
-    blImageIterator<blDataType>                 operator+(const ptrdiff_t& movement)const{auto temp(*this);temp += movement;return temp;}
-    blImageIterator<blDataType>                 operator-(const ptrdiff_t& movement)const{auto temp(*this);temp -= movement;return temp;}
+    bool                                        operator==(const blImageIterator<blDataType>& imageIterator)const;
+    bool                                        operator!=(const blImageIterator<blDataType>& imageIterator)const;
 
-    ptrdiff_t                                   operator-(const blImageIterator<blDataType>& imageIterator)const{return std::distance(imageIterator.getPtr(),this->getPtr());}
+    // Overloaded assignment/arithmetic operators
 
-    blDataType&                                 operator*(){return *m_ptr;}
-    const blDataType&                           operator*()const{return *m_ptr;}
-    blDataType*                                 operator->(){return m_ptr;}
+    blImageIterator<blDataType>&                operator+=(const ptrdiff_t& movement);
+    blImageIterator<blDataType>&                operator-=(const ptrdiff_t& movement);
+    blImageIterator<blDataType>&                operator++();
+    blImageIterator<blDataType>&                operator--();
+    blImageIterator<blDataType>                 operator++(int);
+    blImageIterator<blDataType>                 operator--(int);
+    blImageIterator<blDataType>                 operator+(const ptrdiff_t& movement)const;
+    blImageIterator<blDataType>                 operator-(const ptrdiff_t& movement)const;
 
-    blDataType*                                 getPtr()const{return m_ptr;}
-    const blDataType*                           getConstPtr()const{return m_ptr;}
+    // Operator used to "subtract"
+    // two pointers (it gives the
+    // distance)
+
+    ptrdiff_t                                   operator-(const blImageIterator<blDataType>& imageIterator)const;
+
+    // Overloaded referencing/dereferencing operators
+
+    blDataType&                                 operator*();
+    const blDataType&                           operator*()const;
+    blDataType*                                 operator->();
+
+    // Get functions
+
+    blDataType*                                 getPtr()const;
+    const blDataType*                           getConstPtr()const;
 
 protected:
+
+    // The actual raw pointer
 
     blDataType*                                 m_ptr;
 };
@@ -73,35 +111,190 @@ protected:
 
 
 //-------------------------------------------------------------------
-// A reverse moving random iterator
+template<typename blDataType>
+inline blImageIterator<blDataType>::blImageIterator(blDataType* ptr)
+{
+    m_ptr = ptr;
+}
+//-------------------------------------------------------------------
+
+
 //-------------------------------------------------------------------
 template<typename blDataType>
-class blImageReverseIterator : public blImageIterator<blDataType>
+inline blImageIterator<blDataType>& blImageIterator<blDataType>::operator=(blDataType* ptr)
 {
-public:
+    m_ptr = ptr;
 
-    blImageReverseIterator(blDataType* ptr = nullptr):blImageReverseIterator<blDataType>(ptr){}
-    blImageReverseIterator(const blImageIterator<blDataType>& imageIterator){this->m_ptr = imageIterator.getPtr();}
-    blImageReverseIterator(const blImageReverseIterator<blDataType>& imageReverseIterator) = default;
-    ~blImageReverseIterator(){}
+    return (*this);
+}
+//-------------------------------------------------------------------
 
-    blImageReverseIterator<blDataType>&         operator=(const blImageReverseIterator<blDataType>& imageReverseIterator) = default;
-    blImageReverseIterator<blDataType>&         operator=(const blImageIterator<blDataType>& imageIterator){this->m_ptr = imageIterator.getPtr();return (*this);}
-    blImageReverseIterator<blDataType>&         operator=(blDataType* ptr){this->setPtr(ptr);return (*this);}
 
-    blImageReverseIterator<blDataType>&         operator+=(const ptrdiff_t& movement){this->m_ptr -= movement;return (*this);}
-    blImageReverseIterator<blDataType>&         operator-=(const ptrdiff_t& movement){this->m_ptr += movement;return (*this);}
-    blImageReverseIterator<blDataType>&         operator++(){--this->m_ptr;return (*this);}
-    blImageReverseIterator<blDataType>&         operator--(){++this->m_ptr;return (*this);}
-    blImageReverseIterator<blDataType>          operator++(int){auto temp(*this);--this->m_ptr;return temp;}
-    blImageReverseIterator<blDataType>          operator--(int){auto temp(*this);++this->m_ptr;return temp;}
-    blImageReverseIterator<blDataType>          operator+(const int& movement)const{auto oldPtr = this->m_ptr;this->m_ptr-=movement;auto temp(*this);this->m_ptr = oldPtr;return temp;}
-    blImageReverseIterator<blDataType>          operator-(const int& movement)const{auto oldPtr = this->m_ptr;this->m_ptr+=movement;auto temp(*this);this->m_ptr = oldPtr;return temp;}
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline bool blImageIterator<blDataType>::operator==(const blImageIterator<blDataType>& imageIterator)const
+{
+    return (m_ptr == imageIterator.getConstPtr());
+}
+//-------------------------------------------------------------------
 
-    ptrdiff_t                                   operator-(const blImageReverseIterator<blDataType>& imageReverseIterator)const{return std::distance(this->getPtr(),imageReverseIterator.getPtr());}
 
-    blImageReverseIterator<blDataType>          base(){blImageIterator<blDataType> forwardIterator(this->m_ptr); ++forwardIterator; return forwardIterator;}
-};
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline bool blImageIterator<blDataType>::operator!=(const blImageIterator<blDataType>& imageIterator)const
+{
+    return (m_ptr != imageIterator.getConstPtr());
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType>& blImageIterator<blDataType>::operator+=(const ptrdiff_t& movement)
+{
+    m_ptr += movement;
+
+    return (*this);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType>& blImageIterator<blDataType>::operator-=(const ptrdiff_t& movement)
+{
+    m_ptr -= movement;
+
+    return (*this);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType>& blImageIterator<blDataType>::operator++()
+{
+    ++m_ptr;
+
+    return (*this);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType>& blImageIterator<blDataType>::operator--()
+{
+    --m_ptr;
+
+    return (*this);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType> blImageIterator<blDataType>::operator++(int)
+{
+    auto temp(*this);
+
+    ++m_ptr;
+
+    return temp;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType> blImageIterator<blDataType>::operator--(int)
+{
+    auto temp(*this);
+
+    --m_ptr;
+
+    return temp;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType> blImageIterator<blDataType>::operator+(const ptrdiff_t& movement)const
+{
+    auto temp(*this);
+
+    temp += movement;
+
+    return temp;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blImageIterator<blDataType> blImageIterator<blDataType>::operator-(const ptrdiff_t& movement)const
+{
+    auto temp(*this);
+
+    temp -= movement;
+
+    return temp;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline ptrdiff_t blImageIterator<blDataType>::operator-(const blImageIterator<blDataType>& imageIterator)const
+{
+    return std::distance(imageIterator.getPtr(),this->getPtr());
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blDataType& blImageIterator<blDataType>::operator*()
+{
+    return *m_ptr;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline const blDataType& blImageIterator<blDataType>::operator*()const
+{
+    return *m_ptr;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blDataType* blImageIterator<blDataType>::operator->()
+{
+    return m_ptr;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blDataType* blImageIterator<blDataType>::getPtr()const
+{
+    return m_ptr;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline const blDataType* blImageIterator<blDataType>::getConstPtr()const
+{
+    return m_ptr;
+}
 //-------------------------------------------------------------------
 
 

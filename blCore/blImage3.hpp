@@ -7,10 +7,12 @@
 // CLASS:           blImage3
 // BASE CLASS:      blImage2
 //
-// PURPOSE:         Based on blImage2, this class adds functions to
-//                  clone other images, as well as functions to
-//                  wrap IplImage images with blImage objects without
-//                  making copies of the image data
+// PURPOSE:         - Based on blImage2, this class adds functions to
+//                    clone other images, as well as functions to
+//                    wrap IplImage images with blImage objects without
+//                    making copies of the image data
+//                  - It also adds random access forward and reverse
+//                    begin/end iterators
 //
 // AUTHOR:          Vincenzo Barbato
 //                  http://www.barbatolabs.com
@@ -22,11 +24,6 @@
 // DEPENDENCIES:    blImage2 and all its dependencies
 //
 // NOTES:
-//
-// DATE CREATED:    Jan/18/2012
-//
-// DATE UPDATED:    - Sep/17/2015 -- Added a function to clone images
-//                                   from the sfml library (sfml image)
 //-------------------------------------------------------------------
 
 
@@ -48,7 +45,10 @@ class blImage3 : public blImage2<blDataType>
 {
 protected: // Protected typedefs
 
-    typedef typename blImage2<blDataType>::blImagePtr       blImagePtr;
+    typedef blImageCircularIterator<blDataType>                     iteratorROI;
+    typedef blImageCircularIterator<const blDataType>               const_iteratorROI;
+
+    typedef typename blImage2<blDataType>::blImagePtr               blImagePtr;
 
 public: // Constructors and destructors
 
@@ -129,6 +129,25 @@ private: // Private functions
     // and number of channels
 
     void                                    cloneFromImageOfSameType(const IplImage* srcImage);
+
+public: // Circular iterators
+
+    // Functions used to
+    // get circular iterators to
+    // the beginning and end of
+    // the ROI
+    // (They go through the ROI
+    // just once, they're useful
+    // in having an stl algorithm
+    // go through the ROI because
+    // the ROI is not a contiguous
+    // space in memory)
+
+    iteratorROI                             begin_ROI();
+    iteratorROI                             end_ROI();
+
+    const_iteratorROI                       cbegin_ROI()const;
+    const_iteratorROI                       cend_ROI()const;
 };
 //-------------------------------------------------------------------
 
@@ -742,6 +761,42 @@ inline bool blImage3<blDataType>::clone(const IplImage* imageToClone,
     // So we simply return false
 
     return false;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline typename blImage3<blDataType>::iteratorROI blImage3<blDataType>::begin_ROI()
+{
+    return iteratorROI(*this,0,1);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline typename blImage3<blDataType>::iteratorROI blImage3<blDataType>::end_ROI()
+{
+    return iteratorROI(*this,this->sizeROI(),0);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline typename blImage3<blDataType>::const_iteratorROI blImage3<blDataType>::cbegin_ROI()const
+{
+    return const_iteratorROI(*this,0,1);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline typename blImage3<blDataType>::const_iteratorROI blImage3<blDataType>::cend_ROI()const
+{
+    return const_iteratorROI(*this,this->sizeROI(),0);
 }
 //-------------------------------------------------------------------
 

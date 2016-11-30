@@ -92,12 +92,13 @@ namespace blImageAPI
 
 
 
-    // This file defines basic forward and
+    // These files define basic forward and
     // reverse random access iterators to
     // allow the use of blImage class in stl
     // algorithms
 
-    #include "blCore/blImageIterators.hpp"
+    #include "blCore/blImageIterator.hpp"
+    #include "blCore/blImageReverseIterator.hpp"
 
 
 
