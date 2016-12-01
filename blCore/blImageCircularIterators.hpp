@@ -93,9 +93,13 @@ public: // Overloaded operators
 
     int                                         operator-(const blImageCircularIterator<blDataType>& imageCircularIterator)const;
 
+    // Dereferencing operators
+
     blDataType&                                 operator*();
     const blDataType&                           operator*()const;
+
     blDataType*                                 operator->();
+    const blDataType*                           operator->()const;
 
 public: // Public functions
 
@@ -107,6 +111,16 @@ public: // Public functions
     const int&                                  getDataIndex()const;
     const int&                                  getMaxNumberOfCirculations()const;
     const int&                                  getStartIndex()const;
+
+    // Functions used to get the
+    // raw pointer (used in the
+    // equality operator to check
+    // if two circular iterators
+    // are pointing to the same
+    // data point
+
+    blDataType*                                 getRawPointer();
+    const blDataType*                           getRawPointer()const;
 
     // Functions used to set the
     // current data index the
@@ -295,7 +309,7 @@ inline int blImageCircularIterator<blDataType>::getCurrentNumberOfCirculations()
     // times the iterator has circled around
     // (Again this number could be negative)
 
-    int numberOfCirculations = distanceIteratorHasMoved % m_image.sizeROI();
+    int numberOfCirculations = distanceIteratorHasMoved / m_image.sizeROI();
 
     return numberOfCirculations;
 }
@@ -306,13 +320,21 @@ inline int blImageCircularIterator<blDataType>::getCurrentNumberOfCirculations()
 template<typename blDataType>
 inline bool blImageCircularIterator<blDataType>::operator==(const blImageCircularIterator<blDataType>& imageCircularIterator)const
 {
-    if(m_image != imageCircularIterator.getImage())
-        return false;
+//    if(m_image != imageCircularIterator.getImage())
+//        return false;
 
-    if(m_image.getDataIndex_circ_atROI(m_dataIndex) != imageCircularIterator.getImage().getDataIndex_circ_atROI(imageCircularIterator.getDataIndex()))
-        return false;
+//    if(m_image.getDataIndex_circ_atROI(m_dataIndex) != imageCircularIterator.getImage().getDataIndex_circ_atROI(imageCircularIterator.getDataIndex()))
+//        return false;
 
-    if(getCurrentNumberOfCirculations() < m_maxNumberOfCirculations && imageCircularIterator.getCurrentNumberOfCirculations() < imageCircularIterator.getMaxNumberOfCirculations())
+//    if(getCurrentNumberOfCirculations() < m_maxNumberOfCirculations && imageCircularIterator.getCurrentNumberOfCirculations() < imageCircularIterator.getMaxNumberOfCirculations())
+//        return true;
+
+//    if(getCurrentNumberOfCirculations() >= m_maxNumberOfCirculations && imageCircularIterator.getCurrentNumberOfCirculations() >= imageCircularIterator.getMaxNumberOfCirculations())
+//        return true;
+
+//    return false;
+
+    if(this->getRawPointer() == imageCircularIterator.getRawPointer())
         return true;
     else
         return false;
@@ -455,6 +477,75 @@ inline const blDataType& blImageCircularIterator<blDataType>::operator*()const
 //-------------------------------------------------------------------
 template<typename blDataType>
 inline blDataType* blImageCircularIterator<blDataType>::operator->()
+{
+    // If the max number of circulations
+    // has been passed, then we return the
+    // "end" iterator, otherwise we return
+    // the correct iterator
+
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
+    {
+        auto ROIRectangle = m_image.getROI();
+
+        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
+    }
+    else
+    {
+        return &m_image.circ_atROI(m_dataIndex);
+    }
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline const blDataType* blImageCircularIterator<blDataType>::operator->()const
+{
+    // If the max number of circulations
+    // has been passed, then we return the
+    // "end" iterator, otherwise we return
+    // the correct iterator
+
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
+    {
+        auto ROIRectangle = m_image.getROI();
+
+        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
+    }
+    else
+    {
+        return &m_image.circ_atROI(m_dataIndex);
+    }
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blDataType* blImageCircularIterator<blDataType>::getRawPointer()
+{
+    // If the max number of circulations
+    // has been passed, then we return the
+    // "end" iterator, otherwise we return
+    // the correct iterator
+
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
+    {
+        auto ROIRectangle = m_image.getROI();
+
+        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
+    }
+    else
+    {
+        return &m_image.circ_atROI(m_dataIndex);
+    }
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline const blDataType* blImageCircularIterator<blDataType>::getRawPointer()const
 {
     // If the max number of circulations
     // has been passed, then we return the
