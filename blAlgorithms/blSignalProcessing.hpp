@@ -18,11 +18,6 @@
 //                  http://www.opensource.org/licenses/mit-license.php
 //
 // DEPENDENCIES:
-//
-// NOTES:
-//
-// DATE CREATED:    Dec/30/2010
-// DATE UPDATED:
 //-------------------------------------------------------------------
 
 
@@ -106,44 +101,53 @@ inline void generateFrequencyAxis(blImage<blDataType>& frequencyAxis,
 {
     // The corresponding frequency
     // of each "bin" in the fft image
-    // is:  Freq = n * Fs / N
-    // where Freq = Frequency
-    //       n = nth bin
-    //       Fs = Sampling Frequency
-    //       N = sample size (number of bins)
+    // is:  freq = i * fs / n
+    // where freq = Frequency
+    //       i = ith bin
+    //       fs = Sampling Frequency
+    //       n = sample size (number of bins)
 
-    int numberOfSamples = frequencyAxis.sizeROI();
+
 
     int rows = frequencyAxis.size1ROI();
     int cols = frequencyAxis.size2ROI();
     int yROI = frequencyAxis.yROI();
     int xROI = frequencyAxis.xROI();
 
-    int currentBin = 0;
+    int iLimit = yROI + rows;
+    int jLimit = xROI + cols;
 
-    double rateStep = samplingRate / double(numberOfSamples);
+
+
+    int numberOfSamples = rows*cols;
+
+    double rateStep = samplingRate / static_cast<double>(numberOfSamples);
+
+
+
+    double currentBin = 0;
+
+
 
     if(hasfftImageBeenShiftedToTheMiddle)
     {
-        for(int i = yROI; i < yROI + rows && currentBin < numberOfSamples; ++i)
-        {
-            for(int j = xROI; j < xROI + cols && currentBin < numberOfSamples; ++j)
-            {
-                frequencyAxis(currentBin) = -double(currentBin - numberOfSamples/2) * rateStep;
+        double halfNumberOfSamples = static_cast<double>(numberOfSamples/2);
 
-                ++currentBin;
+        for(int i = yROI; i < iLimit; ++i)
+        {
+            for(int j = xROI; j < jLimit; ++j,++currentBin)
+            {
+                frequencyAxis(i,j) = -(currentBin - halfNumberOfSamples) * rateStep;
             }
         }
     }
     else
     {
-        for(int i = yROI; i < yROI + rows && currentBin < numberOfSamples; ++i)
+        for(int i = yROI; i < iLimit; ++i)
         {
-            for(int j = xROI; j < xROI + cols && currentBin < numberOfSamples; ++j)
+            for(int j = xROI; j < jLimit; ++j,++currentBin)
             {
-                frequencyAxis(currentBin) = double(currentBin) * rateStep;
-
-                ++currentBin;
+                frequencyAxis(i,j) = currentBin * rateStep;
             }
         }
     }
@@ -173,7 +177,7 @@ inline void shiftImageForFourierTransform(blImage<blDataType>& img)
         for(int j = xROI; j < cols + xROI; ++j)
         {
             if((i + j) % 2)
-                img(i,j) *= blDataType(-1);
+                img(i,j) *= static_cast<blDataType>(-1);
         }
     }
 }
@@ -195,6 +199,8 @@ inline void shiftImageForFourierTransform(const blImage<blDataType>& srcImg,
     int dstCols = dstImg.size2ROI();
     int dstyROI = dstImg.yROI();
     int dstxROI = dstImg.xROI();
+
+
 
     for(int iSrc = srcyROI, iDst = dstyROI;
         iSrc < srcRows + srcyROI && iDst < dstRows + dstyROI;

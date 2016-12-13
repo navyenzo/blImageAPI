@@ -109,8 +109,9 @@ public: // Public functions
     blImage2<blDataType>&                       getImage();
     const blImage2<blDataType>&                 getImage()const;
     const int&                                  getDataIndex()const;
-    const int&                                  getMaxNumberOfCirculations()const;
     const int&                                  getStartIndex()const;
+    int                                         getCurrentNumberOfCirculations()const;
+    const int&                                  getMaxNumberOfCirculations()const;
 
     // Functions used to get the
     // raw pointer (used in the
@@ -129,15 +130,6 @@ public: // Public functions
     void                                        setDataIndex(const int& dataIndex);
     void                                        setDataIndex(const int& rowIndex,const int& colIndex);
 
-    // Special function used to
-    // calculate how many times
-    // the iterator has circled
-    // around from where it started
-    // (Could be negative when circling
-    // in the reverse direction)
-
-    int                                         getCurrentNumberOfCirculations()const;
-
 private: // Private variables
 
     // The image that we're
@@ -155,6 +147,10 @@ private: // Private variables
     // iterating from
 
     int                                         m_startIndex;
+
+    // Current number of circulations
+
+    int                                         m_currentNumberOfCirculations;
 
     // Max number of allowed times
     // the iterator can circulate
@@ -225,10 +221,6 @@ inline blImageCircularIterator<blDataType>::~blImageCircularIterator()
 template<typename blDataType>
 inline void blImageCircularIterator<blDataType>::setDataIndex(const int& dataIndex)
 {
-    // First we just set the
-    // current and start data
-    // indeces
-
     m_dataIndex = m_image.getDataIndex_circ_atROI(dataIndex);
 
     m_startIndex = m_dataIndex;
@@ -295,23 +287,7 @@ inline const int& blImageCircularIterator<blDataType>::getStartIndex()const
 template<typename blDataType>
 inline int blImageCircularIterator<blDataType>::getCurrentNumberOfCirculations()const
 {
-    // We have to calculate how many times
-    // we have gone around and passed the
-    // start point over and over again
-
-    // First we calculate how far the current
-    // data index is from the start index
-    // (The current index could be negative)
-
-    int distanceIteratorHasMoved = m_dataIndex - m_startIndex;
-
-    // Finally we calculate and return how many
-    // times the iterator has circled around
-    // (Again this number could be negative)
-
-    int numberOfCirculations = distanceIteratorHasMoved / m_image.sizeROI();
-
-    return numberOfCirculations;
+    return ( (m_dataIndex - m_startIndex) / m_image.sizeROI() );
 }
 //-------------------------------------------------------------------
 
@@ -320,20 +296,6 @@ inline int blImageCircularIterator<blDataType>::getCurrentNumberOfCirculations()
 template<typename blDataType>
 inline bool blImageCircularIterator<blDataType>::operator==(const blImageCircularIterator<blDataType>& imageCircularIterator)const
 {
-//    if(m_image != imageCircularIterator.getImage())
-//        return false;
-
-//    if(m_image.getDataIndex_circ_atROI(m_dataIndex) != imageCircularIterator.getImage().getDataIndex_circ_atROI(imageCircularIterator.getDataIndex()))
-//        return false;
-
-//    if(getCurrentNumberOfCirculations() < m_maxNumberOfCirculations && imageCircularIterator.getCurrentNumberOfCirculations() < imageCircularIterator.getMaxNumberOfCirculations())
-//        return true;
-
-//    if(getCurrentNumberOfCirculations() >= m_maxNumberOfCirculations && imageCircularIterator.getCurrentNumberOfCirculations() >= imageCircularIterator.getMaxNumberOfCirculations())
-//        return true;
-
-//    return false;
-
     if(this->getRawPointer() == imageCircularIterator.getRawPointer())
         return true;
     else
@@ -346,7 +308,10 @@ inline bool blImageCircularIterator<blDataType>::operator==(const blImageCircula
 template<typename blDataType>
 inline bool blImageCircularIterator<blDataType>::operator!=(const blImageCircularIterator<blDataType>& imageCircularIterator)const
 {
-    return !((*this) == imageCircularIterator);
+    if(this->getRawPointer() != imageCircularIterator.getRawPointer())
+        return true;
+    else
+        return false;
 }
 //-------------------------------------------------------------------
 
@@ -485,9 +450,7 @@ inline blDataType* blImageCircularIterator<blDataType>::operator->()
 
     if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
     {
-        auto ROIRectangle = m_image.getROI();
-
-        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
+        return &m_image.atROI(m_image.sizeROI());
     }
     else
     {
@@ -508,9 +471,7 @@ inline const blDataType* blImageCircularIterator<blDataType>::operator->()const
 
     if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
     {
-        auto ROIRectangle = m_image.getROI();
-
-        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
+        return &m_image.atROI(m_image.sizeROI());
     }
     else
     {
@@ -531,9 +492,7 @@ inline blDataType* blImageCircularIterator<blDataType>::getRawPointer()
 
     if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
     {
-        auto ROIRectangle = m_image.getROI();
-
-        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
+        return &m_image.atROI(m_image.sizeROI());
     }
     else
     {
@@ -554,9 +513,7 @@ inline const blDataType* blImageCircularIterator<blDataType>::getRawPointer()con
 
     if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
     {
-        auto ROIRectangle = m_image.getROI();
-
-        return &m_image[ROIRectangle.y + ROIRectangle.height][ROIRectangle.x + ROIRectangle.height];
+        return &m_image.atROI(m_image.sizeROI());
     }
     else
     {

@@ -555,7 +555,7 @@ inline bool blImage2<blDataType>::doesIndexPointToPixelInImageROI(const int& row
 template<typename blDataType>
 inline int blImage2<blDataType>::size1ROI()const
 {
-    return getROI().height;
+    return (this->m_imageSharedPtr->roi->height);
 }
 //-------------------------------------------------------------------
 
@@ -564,7 +564,7 @@ inline int blImage2<blDataType>::size1ROI()const
 template<typename blDataType>
 inline int blImage2<blDataType>::size2ROI()const
 {
-    return getROI().width;
+    return (this->m_imageSharedPtr->roi->width);
 }
 //-------------------------------------------------------------------
 
@@ -582,7 +582,7 @@ inline int blImage2<blDataType>::sizeROI()const
 template<typename blDataType>
 inline int blImage2<blDataType>::xROI()const
 {
-    return getROI().x;
+    return (this->m_imageSharedPtr->roi->xOffset);
 }
 //-------------------------------------------------------------------
 
@@ -591,7 +591,7 @@ inline int blImage2<blDataType>::xROI()const
 template<typename blDataType>
 inline int blImage2<blDataType>::yROI()const
 {
-    return getROI().y;
+    return (this->m_imageSharedPtr->roi->yOffset);
 }
 //-------------------------------------------------------------------
 
@@ -609,11 +609,7 @@ inline int blImage2<blDataType>::iROI()const
 template<typename blDataType>
 inline CvRect blImage2<blDataType>::getROI()const
 {
-    auto roi = this->getImageSharedPtr()->roi;
-
-    CvRect imageROI(roi->xOffset,roi->yOffset,roi->width,roi->height);
-
-    return imageROI;
+    return (this->m_imageSharedPtr->roi);
 }
 //-------------------------------------------------------------------
 
