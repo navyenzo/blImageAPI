@@ -149,7 +149,7 @@ public: // Public functions
     // set/get the ROI
     // of the image
 
-    CvRect                                  getROI()const;
+    _IplROI*                                getROI()const;
 
     void                                    resetROI();
 
@@ -607,9 +607,9 @@ inline int blImage2<blDataType>::iROI()const
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline CvRect blImage2<blDataType>::getROI()const
+inline _IplROI* blImage2<blDataType>::getROI()const
 {
-    return (this->m_imageSharedPtr->roi);
+    return this->m_imageSharedPtr->roi;
 }
 //-------------------------------------------------------------------
 
