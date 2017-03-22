@@ -151,6 +151,8 @@ public: // Public functions
 
     _IplROI*                                getROI()const;
 
+    CvRect                                  getROIRect()const;
+
     void                                    resetROI();
 
     void                                    setROI(const CvRect& ROIrect,
@@ -610,6 +612,18 @@ template<typename blDataType>
 inline _IplROI* blImage2<blDataType>::getROI()const
 {
     return this->m_imageSharedPtr->roi;
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline CvRect blImage2<blDataType>::getROIRect()const
+{
+    return CvRect(this->m_imageSharedPtr->roi->xOffset,
+                  this->m_imageSharedPtr->roi->yOffset,
+                  this->m_imageSharedPtr->roi->width,
+                  this->m_imageSharedPtr->roi->height);
 }
 //-------------------------------------------------------------------
 

@@ -43,7 +43,7 @@
 template<typename blDataType>
 class blImage3 : public blImage2<blDataType>
 {
-protected: // Protected typedefs
+public: // Public typedefs
 
     typedef blImageCircularIterator<blDataType>                     iteratorROI;
     typedef blImageCircularIterator<const blDataType>               const_iteratorROI;
