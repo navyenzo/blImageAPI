@@ -81,6 +81,16 @@ public: // Overloaded operators
     blDataType&                             operator()(const int& imageElementIndex);
     const blDataType&                       operator()(const int& imageElementIndex)const;
 
+    // Additional access functions
+
+    blDataType&                             at(const int& rowIndex,const int& colIndex);
+    const blDataType&                       at(const int& rowIndex,const int& colIndex)const;
+
+    blDataType&                             at(const int& imageElementIndex);
+    const blDataType&                       at(const int& imageElementIndex)const;
+
+
+
     // Functions used to
     // circularly access
     // image pixels
@@ -331,30 +341,49 @@ inline const blDataType& blImage0<blDataType>::operator()(const int& ImageElemen
 
 //-------------------------------------------------------------------
 template<typename blDataType>
+inline blDataType& blImage0<blDataType>::at(const int& rowIndex,const int& colIndex)
+{
+    return ( (*this)[rowIndex][colIndex] );
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline const blDataType& blImage0<blDataType>::at(const int& rowIndex,const int& colIndex)const
+{
+    return ( (*this)[rowIndex][colIndex] );
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline blDataType& blImage0<blDataType>::at(const int& ImageElementIndex)
+{
+    return (*this)[0][ImageElementIndex];
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline const blDataType& blImage0<blDataType>::at(const int& ImageElementIndex)const
+{
+    return (*this)[0][ImageElementIndex];
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
 inline blDataType& blImage0<blDataType>::circ_at(const int& rowIndex,
                                                  const int& colIndex)
 {
     auto rows = this->size1();
     auto cols = this->size2();
 
-    if(rowIndex < 0)
-    {
-        if(colIndex < 0)
-            return ( (*this)(rows + rowIndex % rows,
-                             cols + colIndex % cols) );
-        else
-            return ( (*this)(rows + rowIndex % rows,
-                             colIndex % cols) );
-    }
-    else
-    {
-        if(colIndex < 0)
-            return ( (*this)(rowIndex % rows,
-                             cols + colIndex % cols) );
-        else
-            return ( (*this)(rowIndex % rows,
-                             colIndex % cols) );
-    }
+    return ( at( (rows + rowIndex % rows) % rows, (cols + colIndex % cols) % cols) );
 }
 //-------------------------------------------------------------------
 
@@ -367,24 +396,7 @@ inline const blDataType& blImage0<blDataType>::circ_at(const int& rowIndex,
     auto rows = this->size1();
     auto cols = this->size2();
 
-    if(rowIndex < 0)
-    {
-        if(colIndex < 0)
-            return ( (*this)(rows + rowIndex % rows,
-                             cols + colIndex % cols) );
-        else
-            return ( (*this)(rows + rowIndex % rows,
-                             colIndex % cols) );
-    }
-    else
-    {
-        if(colIndex < 0)
-            return ( (*this)(rowIndex % rows,
-                             cols + colIndex % cols) );
-        else
-            return ( (*this)(rowIndex % rows,
-                             colIndex % cols) );
-    }
+    return ( at( (rows + rowIndex % rows) % rows, (cols + colIndex % cols) % cols) );
 }
 //-------------------------------------------------------------------
 
@@ -393,12 +405,7 @@ inline const blDataType& blImage0<blDataType>::circ_at(const int& rowIndex,
 template<typename blDataType>
 inline blDataType& blImage0<blDataType>::circ_at(const int& imageElementIndex)
 {
-    if(imageElementIndex < 0)
-    {
-        return (*this)(this->size() + imageElementIndex % this->size());
-    }
-    else
-        return (*this)(imageElementIndex % this->size());
+    return this->at( (this->size() + imageElementIndex % this->size()) % this->size() );
 }
 //-------------------------------------------------------------------
 
@@ -407,12 +414,7 @@ inline blDataType& blImage0<blDataType>::circ_at(const int& imageElementIndex)
 template<typename blDataType>
 inline const blDataType& blImage0<blDataType>::circ_at(const int& imageElementIndex)const
 {
-    if(imageElementIndex < 0)
-    {
-        return (*this)(this->size() + imageElementIndex % this->size());
-    }
-    else
-        return (*this)(imageElementIndex % this->size());
+    return this->at( (this->size() + imageElementIndex % this->size()) % this->size() );
 }
 //-------------------------------------------------------------------
 
@@ -424,20 +426,10 @@ inline int blImage0<blDataType>::getDataIndex_circ_at(const int& rowIndex,const 
     auto rows = this->size1();
     auto cols = this->size2();
 
-    if(rowIndex < 0)
-    {
-        if(colIndex < 0)
-            return ( (rows + rowIndex % rows) * cols + (cols + colIndex % cols) );
-        else
-            return ( (rows + rowIndex % rows) * cols + (colIndex % cols) );
-    }
-    else
-    {
-        if(colIndex < 0)
-            return ( (rowIndex % rows) * cols + (cols + colIndex % cols) );
-        else
-            return ( (rowIndex % rows) * cols + (colIndex % cols) );
-    }
+    auto circledRowIndex = (rows + rowIndex % rows) % rows;
+    auto circledColIndex = (cols + colIndex % cols) % cols;
+
+    return circledRowIndex * cols + circledColIndex;
 }
 //-------------------------------------------------------------------
 
@@ -446,12 +438,7 @@ inline int blImage0<blDataType>::getDataIndex_circ_at(const int& rowIndex,const 
 template<typename blDataType>
 inline int blImage0<blDataType>::getDataIndex_circ_at(const int& imageElementIndex)const
 {
-    if(imageElementIndex < 0)
-    {
-        return (this->size() + imageElementIndex % this->size());
-    }
-    else
-        return (imageElementIndex % this->size());
+    return ( (this->size() + imageElementIndex % this->size()) % this->size() );
 }
 //-------------------------------------------------------------------
 

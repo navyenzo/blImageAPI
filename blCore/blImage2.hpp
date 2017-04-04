@@ -412,24 +412,7 @@ inline blDataType& blImage2<blDataType>::circ_atROI(const int& rowIndex,
     auto rows = this->size1ROI();
     auto cols = this->size2ROI();
 
-    if(rowIndex < 0)
-    {
-        if(colIndex < 0)
-            return ( this->atROI(rows + rowIndex % rows,
-                                 cols + colIndex % cols) );
-        else
-            return ( this->atROI(rows + rowIndex % rows,
-                                 colIndex % cols) );
-    }
-    else
-    {
-        if(colIndex < 0)
-            return ( this->atROI(rowIndex % rows,
-                                 cols + colIndex % cols) );
-        else
-            return ( this->atROI(rowIndex % rows,
-                                 colIndex % cols) );
-    }
+    return ( atROI( (rows + rowIndex % rows) % rows, (cols + colIndex % cols) % cols) );
 }
 //-------------------------------------------------------------------
 
@@ -442,24 +425,7 @@ inline const blDataType& blImage2<blDataType>::circ_atROI(const int& rowIndex,
     auto rows = this->size1ROI();
     auto cols = this->size2ROI();
 
-    if(rowIndex < 0)
-    {
-        if(colIndex < 0)
-            return ( this->atROI(rows + rowIndex % rows,
-                                 cols + colIndex % cols) );
-        else
-            return ( this->atROI(rows + rowIndex % rows,
-                                 colIndex % cols) );
-    }
-    else
-    {
-        if(colIndex < 0)
-            return ( this->atROI(rowIndex % rows,
-                                 cols + colIndex % cols) );
-        else
-            return ( this->atROI(rowIndex % rows,
-                                 colIndex % cols) );
-    }
+    return ( atROI( (rows + rowIndex % rows) % rows, (cols + colIndex % cols) % cols) );
 }
 //-------------------------------------------------------------------
 
@@ -468,13 +434,7 @@ inline const blDataType& blImage2<blDataType>::circ_atROI(const int& rowIndex,
 template<typename blDataType>
 inline blDataType& blImage2<blDataType>::circ_atROI(const int& imageElementIndex)
 {
-    if(this->sizeROI() == 0)
-        return ( this->atROI(0,0) );
-
-    if(imageElementIndex < 0)
-        return ( this->atROI(this->sizeROI() + imageElementIndex % this->sizeROI()) );
-    else
-        return ( this->atROI(imageElementIndex % this->sizeROI()) );
+    return this->atROI( (this->sizeROI() + imageElementIndex % this->sizeROI()) % this->sizeROI() );
 }
 //-------------------------------------------------------------------
 
@@ -483,13 +443,7 @@ inline blDataType& blImage2<blDataType>::circ_atROI(const int& imageElementIndex
 template<typename blDataType>
 inline const blDataType& blImage2<blDataType>::circ_atROI(const int& imageElementIndex)const
 {
-    if(this->sizeROI() == 0)
-        return ( this->atROI(0,0) );
-
-    if(imageElementIndex < 0)
-        return ( this->atROI(this->sizeROI() + imageElementIndex % this->sizeROI()) );
-    else
-        return ( this->atROI(imageElementIndex % this->sizeROI()) );
+    return this->atROI( (this->sizeROI() + imageElementIndex % this->sizeROI()) % this->sizeROI() );
 }
 //-------------------------------------------------------------------
 
@@ -501,20 +455,10 @@ inline int blImage2<blDataType>::getDataIndex_circ_atROI(const int& rowIndex,con
     auto rows = this->size1ROI();
     auto cols = this->size2ROI();
 
-    if(rowIndex < 0)
-    {
-        if(colIndex < 0)
-            return ( (rows + rowIndex % rows) * cols + (cols + colIndex % cols) );
-        else
-            return ( (rows + rowIndex % rows) * cols + (colIndex % cols) );
-    }
-    else
-    {
-        if(colIndex < 0)
-            return ( (rowIndex % rows) * cols + (cols + colIndex % cols) );
-        else
-            return ( (rowIndex % rows) * cols + (colIndex % cols) );
-    }
+    auto circledRowIndex = (rows + rowIndex % rows) % rows;
+    auto circledColIndex = (cols + colIndex % cols) % cols;
+
+    return circledRowIndex * cols + circledColIndex;
 }
 //-------------------------------------------------------------------
 
@@ -523,12 +467,7 @@ inline int blImage2<blDataType>::getDataIndex_circ_atROI(const int& rowIndex,con
 template<typename blDataType>
 inline int blImage2<blDataType>::getDataIndex_circ_atROI(const int& imageElementIndex)const
 {
-    if(imageElementIndex < 0)
-    {
-        return (this->sizeROI() + imageElementIndex % this->sizeROI());
-    }
-    else
-        return (imageElementIndex % this->sizeROI());
+    return ( (this->sizeROI() + imageElementIndex % this->sizeROI()) % this->sizeROI() );
 }
 //-------------------------------------------------------------------
 

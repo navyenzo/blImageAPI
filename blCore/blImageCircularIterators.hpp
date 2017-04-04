@@ -172,7 +172,7 @@ inline blImageCircularIterator<blDataType>::blImageCircularIterator(blImage2<blD
 
     setDataIndex(dataIndex);
 
-    m_maxNumberOfCirculations = std::abs(maxNumberOfCirculations);
+    m_maxNumberOfCirculations = maxNumberOfCirculations;
 }
 //-------------------------------------------------------------------
 
@@ -188,7 +188,7 @@ inline blImageCircularIterator<blDataType>::blImageCircularIterator(blImage2<blD
 
     setDataIndex(rowIndex,colIndex);
 
-    m_maxNumberOfCirculations = std::abs(maxNumberOfCirculations);
+    m_maxNumberOfCirculations = maxNumberOfCirculations;
 }
 //-------------------------------------------------------------------
 

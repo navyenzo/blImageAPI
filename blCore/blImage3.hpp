@@ -143,11 +143,14 @@ public: // Circular iterators
     // the ROI is not a contiguous
     // space in memory)
 
-    iteratorROI                             begin_ROI();
+    iteratorROI                             begin_ROI(const int& maxNumberOfCirculations = 1);
     iteratorROI                             end_ROI();
 
-    const_iteratorROI                       cbegin_ROI()const;
+    const_iteratorROI                       cbegin_ROI(const int& maxNumberOfCirculations = 1)const;
     const_iteratorROI                       cend_ROI()const;
+
+    iteratorROI                             getIterROI(const int& startingElementIndex,const int& maxNumberOfCirculations);
+    const_iteratorROI                       getConstIterROI(const int& startingElementIndex,const int& maxNumberOfCirculations)const;
 };
 //-------------------------------------------------------------------
 
@@ -767,9 +770,9 @@ inline bool blImage3<blDataType>::clone(const IplImage* imageToClone,
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline typename blImage3<blDataType>::iteratorROI blImage3<blDataType>::begin_ROI()
+inline typename blImage3<blDataType>::iteratorROI blImage3<blDataType>::begin_ROI(const int& maxNumberOfCirculations)
 {
-    return iteratorROI(*this,0,1);
+    return iteratorROI(*this,0,maxNumberOfCirculations);
 }
 //-------------------------------------------------------------------
 
@@ -785,9 +788,9 @@ inline typename blImage3<blDataType>::iteratorROI blImage3<blDataType>::end_ROI(
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline typename blImage3<blDataType>::const_iteratorROI blImage3<blDataType>::cbegin_ROI()const
+inline typename blImage3<blDataType>::const_iteratorROI blImage3<blDataType>::cbegin_ROI(const int& maxNumberOfCirculations)const
 {
-    return const_iteratorROI(*this,0,1);
+    return const_iteratorROI(*this,0,maxNumberOfCirculations);
 }
 //-------------------------------------------------------------------
 
@@ -797,6 +800,26 @@ template<typename blDataType>
 inline typename blImage3<blDataType>::const_iteratorROI blImage3<blDataType>::cend_ROI()const
 {
     return const_iteratorROI(*this,this->sizeROI(),0);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline typename blImage3<blDataType>::iteratorROI blImage3<blDataType>::getIterROI(const int& startingElementIndex,
+                                                                                   const int& maxNumberOfCirculations)
+{
+    return iteratorROI(*this,startingElementIndex,maxNumberOfCirculations);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline typename blImage3<blDataType>::const_iteratorROI blImage3<blDataType>::getConstIterROI(const int& startingElementIndex,
+                                                                                              const int& maxNumberOfCirculations)const
+{
+    return const_iteratorROI(*this,startingElementIndex,maxNumberOfCirculations);
 }
 //-------------------------------------------------------------------
 
