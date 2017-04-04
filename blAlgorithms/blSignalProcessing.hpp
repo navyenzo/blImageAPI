@@ -47,11 +47,16 @@ enum blFilterFunctionTypeEnum {BL_BUTTERWORTH,
 // containing a signal in the frequency
 // domain that corresponds to the
 // specified frequency
+//
+// NOTE: This function assumes that the
+//       data has been shifted to the middle
+//
+// NOTE: This function also does not check
+//       for out of bounds index
 //-------------------------------------------------------------------
-inline int frequencyIndex(const double& frequencyOfInterest,
-                          const int& numberOfSamples,
-                          const double& samplingFrequency,
-                          const bool& hasfftImageBeenShiftedToTheMiddle)
+inline int frequencyIndexForShiftedData(const double& frequencyOfInterest,
+                                        const int& numberOfSamples,
+                                        const double& samplingFrequency)
 {
     // The corresponding frequency
     // of each "bin" in the fft image
@@ -62,21 +67,7 @@ inline int frequencyIndex(const double& frequencyOfInterest,
     //       Fs = Sampling Frequency
     //       N = sample size (number of bins)
 
-    int index = 0;
-
-    if(hasfftImageBeenShiftedToTheMiddle)
-    {
-        index = (double(numberOfSamples) / double(2)) - frequencyOfInterest * double(numberOfSamples) / samplingFrequency;
-    }
-    else
-    {
-        index = int(frequencyOfInterest * double(numberOfSamples) / samplingFrequency);
-    }
-
-    if(index < 0)
-        index = 0;
-    else if(index >= numberOfSamples)
-        index = numberOfSamples - 1;
+    int index = (double(numberOfSamples) / double(2)) - frequencyOfInterest * double(numberOfSamples) / samplingFrequency;
 
     return index;
 }
@@ -92,6 +83,9 @@ inline int frequencyIndex(const double& frequencyOfInterest,
 // size of the ROI of the axis
 // image corresponds to the
 // number of samples
+//
+// NOTE: This function assumes that the
+//       data has been shifted to the middle
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -129,26 +123,13 @@ inline void generateFrequencyAxis(blImage<blDataType>& frequencyAxis,
 
 
 
-    if(hasfftImageBeenShiftedToTheMiddle)
-    {
-        double halfNumberOfSamples = static_cast<double>(numberOfSamples/2);
+    double halfNumberOfSamples = static_cast<double>(numberOfSamples/2);
 
-        for(int i = yROI; i < iLimit; ++i)
-        {
-            for(int j = xROI; j < jLimit; ++j,++currentBin)
-            {
-                frequencyAxis(i,j) = -(currentBin - halfNumberOfSamples) * rateStep;
-            }
-        }
-    }
-    else
+    for(int i = yROI; i < iLimit; ++i)
     {
-        for(int i = yROI; i < iLimit; ++i)
+        for(int j = xROI; j < jLimit; ++j,++currentBin)
         {
-            for(int j = xROI; j < jLimit; ++j,++currentBin)
-            {
-                frequencyAxis(i,j) = currentBin * rateStep;
-            }
+            frequencyAxis(i,j) = -(currentBin - halfNumberOfSamples) * rateStep;
         }
     }
 }
@@ -177,7 +158,9 @@ inline void shiftImageForFourierTransform(blImage<blDataType>& img)
         for(int j = xROI; j < cols + xROI; ++j)
         {
             if((i + j) % 2)
+            {
                 img(i,j) *= static_cast<blDataType>(-1);
+            }
         }
     }
 }
@@ -222,6 +205,10 @@ inline void shiftImageForFourierTransform(const blImage<blDataType>& srcImg,
 // The following functions take the
 // forward fast fourier transform
 // of an image
+//
+// NOTE: The first of these functions assumes that
+//       both source and destination images have the
+//       same ROI size
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -229,20 +216,6 @@ inline void fft2(const blImage<blDataType>& srcImage,
                  blImage< std::complex<blDataType> >& dstImage,
                  const bool& shouldfftBeDoneOnIndividualRows)
 {
-    // Let's make sure that
-    // the destination image
-    // is of the correct size
-
-    if(dstImage.size1ROI() != srcImage.size1ROI() ||
-       dstImage.size2ROI() != srcImage.size2ROI())
-    {
-        // We can't take the forward
-        // fft of the image due to the
-        // sizes being different
-
-        return;
-    }
-
     if(shouldfftBeDoneOnIndividualRows)
         cvDFT(srcImage,dstImage,CV_DXT_FORWARD|CV_DXT_ROWS);
     else
@@ -270,6 +243,10 @@ inline blImage< std::complex<blDataType> > fft2(const blImage<blDataType>& srcIm
 // The following functions take the
 // inverse fast fourier transform of
 // an image
+//
+// NOTE: The first of these functions assumes that
+//       both source and destination images have the
+//       same ROI size
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -277,23 +254,6 @@ inline void ifft2(const blImage< std::complex<blDataType> >& srcImage,
                   blImage<blDataType>& dstImage,
                   const bool& shouldifftBeDoneOnIndividualRows)
 {
-    // Let's make sure that
-    // the destination image
-    // is of the correct size
-
-    if(dstImage.size1ROI() != srcImage.size1ROI() ||
-       dstImage.size2ROI() != srcImage.size2ROI())
-    {
-        // We can't take the forward
-        // fft of the image due to the
-        // sizes being different
-
-        return;
-    }
-
-
-    // Compute the inverse fft
-
     if(shouldifftBeDoneOnIndividualRows)
         cvDFT(srcImage,dstImage,CV_DXT_INV_SCALE|CV_DXT_ROWS);
     else
