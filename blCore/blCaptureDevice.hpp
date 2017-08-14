@@ -245,7 +245,7 @@ inline bool blCaptureDevice::connectToCamera(const int& whichCamera,
     }
     else
     {
-        // Error
+        // Error connecting to the camera
 
         return false;
     }

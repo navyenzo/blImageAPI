@@ -52,8 +52,8 @@ public:
 
 public: // Assignment operators
 
-    blImageIterator<blDataType>&                operator=(const blImageIterator<blDataType>& imageIterator) = default;
-    blImageIterator<blDataType>&                operator=(blDataType* ptr);
+        blImageIterator<blDataType>&                operator=(const blImageIterator<blDataType>& imageIterator) = default;
+        blImageIterator<blDataType>&                operator=(blDataType* ptr);
 
 public: // Public functions
 
@@ -248,7 +248,7 @@ inline blImageIterator<blDataType> blImageIterator<blDataType>::operator-(const 
 template<typename blDataType>
 inline ptrdiff_t blImageIterator<blDataType>::operator-(const blImageIterator<blDataType>& imageIterator)const
 {
-    return std::distance(imageIterator.getPtr(),this->getPtr());
+    return std::distance(this->getPtr(),imageIterator.getPtr());
 }
 //-------------------------------------------------------------------
 

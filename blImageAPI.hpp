@@ -33,11 +33,11 @@
 
 #include <memory>
 
-#include <blIteratorAPI/blIteratorAPI.hpp>
-
 #include <blMathAPI/blMathAPI.hpp>
 
-#include <opencv.hpp>
+#include <blIteratorAPI/blIteratorAPI.hpp>
+
+#include <opencv2/opencv.hpp>
 
 //-------------------------------------------------------------------
 

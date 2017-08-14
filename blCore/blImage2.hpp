@@ -82,11 +82,6 @@ public: // Public functions
                                                    const int& numOfCols,
                                                    const blDataType& initialValue);
 
-    // Function used to set the
-    // image to a specified value
-
-    void                                    set(const blDataType& specifiedValue);
-
     // Functions used to access
     // image componenets based
     // on the image ROI
@@ -335,7 +330,7 @@ inline bool blImage2<blDataType>::create(const int& numOfRows,
 
     if(this->create(numOfRows,numOfCols))
     {
-        set(initialValue);
+        std::fill(this->begin(),this->end(),initialValue);
 
         return true;
     }
@@ -346,21 +341,6 @@ inline bool blImage2<blDataType>::create(const int& numOfRows,
         // return false
 
         return false;
-    }
-}
-//-------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------
-template<typename blDataType>
-inline void blImage2<blDataType>::set(const blDataType& specifiedValue)
-{
-    for(int i = 0; i < this->size1ROI(); ++i)
-    {
-        for(int j = 0; j < this->size2ROI(); ++j)
-        {
-            this->atROI(i,j) = specifiedValue;
-        }
     }
 }
 //-------------------------------------------------------------------

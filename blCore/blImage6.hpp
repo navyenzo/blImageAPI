@@ -7,16 +7,16 @@
 // CLASS:           blImage6
 // BASE CLASS:      blImage5
 //
-// PURPOSE:         Based on blImage5, this class adds functions
-//                  used to copy individual row and column vectors
-//                  from the image or to copy a sub-image into
-//                  another one
-//                  It also adds a function to sample the image
-//                  at specified intervals into a smaller or
-//                  bigger image without any interpolation
-//                  It also adds functions to add/subtract/multiply
-//                  and divide the image by a datapoint or a datapoint
-//                  by an image (Individual pixels)
+// PURPOSE:         -- Based on blImage5, this class adds functions
+//                     used to copy individual row and column vectors
+//                     from the image or to copy a sub-image into
+//                     another one
+//                  -- It also adds functions to add/subtract/multiply
+//                     and divide the image by a datapoint or a datapoint
+//                     by an image (Individual pixels)
+//                  -- It also adds a function to grow an image by
+//                     increasing the image's size and setting the
+//                     newly added pixels to black/zero
 //
 // AUTHOR:          Vincenzo Barbato
 //                  http://www.barbatolabs.com
@@ -87,6 +87,8 @@ public: // Public functions
     template<typename blDataType2>
     const blImage6<blDataType>&         divideDataPointByImagePixels(const blDataType2& dataPoint);
 
+
+
     // Functions used to
     // partially copy a
     // row of another image.
@@ -102,6 +104,8 @@ public: // Public functions
                                                       const int& howManyColsToCopyFromSrcImage,
                                                       const int& whichRowToWriteInto,
                                                       const int& whichColToStartWritingInto);
+
+
 
     // Functions used to
     // partially copy a
@@ -119,6 +123,8 @@ public: // Public functions
                                                       const int& howManyRowsToCopyFromSrcImage,
                                                       const int& whichRowToWriteInto,
                                                       const int& whichColToStartWritingInto);
+
+
 
     // Function used to
     // copy a portion of
@@ -140,24 +146,15 @@ public: // Public functions
                                                   const int& whichRowToStartWritingInto,
                                                   const int& whichColToStartWritingInto);
 
-    // Function used to
-    // sample the image
-    // at a specified
-    // interval.  The
-    // image is sampled
-    // without interpolating
-    // the pixel values
-    //
-    // NOTE:    This function
-    //          does not check
-    //          the validity of
-    //          the specified indeces
 
-    void                                sampleImageWithoutInterpolating(const blImage6<blDataType>& srcImage,
-                                                                        const int& whichRowToStartSamplingFrom,
-                                                                        const int& whichColToStartSamplingFrom,
-                                                                        const int& howManyRowsToSample,
-                                                                        const int& howManyColsToSample);
+
+    // Function used to grow an image
+    // by increasing the image's size
+    // and setting the newly added pixels
+    // to black/zero
+
+    void                                growImageWithBlackPixels(const int& numberOfExtraRows,
+                                                                 const int& numberOfExtraCols);
 };
 //-------------------------------------------------------------------
 
@@ -361,50 +358,51 @@ inline void blImage6<blDataType>::copyImage(const blImage6<blDataType2>& srcImag
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline void blImage6<blDataType>::sampleImageWithoutInterpolating(const blImage6<blDataType>& srcImage,
-                                                                  const int& whichRowToStartSamplingFrom,
-                                                                  const int& whichColToStartSamplingFrom,
-                                                                  const int& howManyRowsToSample,
-                                                                  const int& howManyColsToSample)
+inline void blImage6<blDataType>::growImageWithBlackPixels(const int& numberOfExtraRows,
+                                                           const int& numberOfExtraCols)
 {
-    // Calculate the row and
-    // column steps used to
-    // sample the original
-    // image
+    // First we check to make sure we
+    // actually have to add new rows
+    // and columns to the image
 
-    double rowStep = double(howManyRowsToSample)/double(this->size1());
-    double colStep = double(howManyColsToSample)/double(this->size2());
+    if(numberOfExtraRows <= 0 && numberOfExtraCols <= 0)
+    {
+        // This means we don't have to actually
+        // add any new rows or columns, so we just
+        // quit
 
-    // The indeces used to
-    // index the source image
+        return;
+    }
 
-    int rowIndex = 0;
-    int colIndex = 0;
 
-    // Loop through this image
-    // and assign the sampled
-    // values from the source
-    // image
+
+    // Here we create a new image with the
+    // required grown size and initialize it
+    // to black/zeros
+
+    blImage6<blDataType> grownImage;
+    grownImage.create(this->size1() + numberOfExtraRows,this->size2() + numberOfExtraCols,blDataType(0));
+
+
+
+    // We now copy over the image
 
     for(int i = 0; i < this->size1(); ++i)
     {
-        // Calculate the
-        // row index
-
-        rowIndex = int(double(i)*rowStep + double(whichRowToStartSamplingFrom));
-
         for(int j = 0; j < this->size2(); ++j)
         {
-            // Calculate the
-            // column index
-
-            colIndex = int(double(j)*colStep + double(whichColToStartSamplingFrom));
-
-            // Assign the value
-
-            (*this)[i][j] = srcImage[rowIndex][colIndex];
+            grownImage[i][j] = this->at(i,j);
         }
     }
+
+
+
+    // Finally we assign the grown image's shared
+    // pointer to this image's shared pointer
+    // therefore releasing this image and only
+    // retaining the grown one
+
+    this->m_sharedImagePtr = grownImage.getSharedImagePtr();
 }
 //-------------------------------------------------------------------
 

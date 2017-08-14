@@ -12,7 +12,8 @@
 //                    wrap IplImage images with blImage objects without
 //                    making copies of the image data
 //                  - It also adds random access forward and reverse
-//                    begin/end iterators
+//                    begin/end circular iterators used to iterate
+//                    over an image's ROI
 //
 // AUTHOR:          Vincenzo Barbato
 //                  http://www.barbatolabs.com

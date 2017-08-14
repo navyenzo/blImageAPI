@@ -71,20 +71,20 @@ public: // Public functions
     // this blImage structure
 
     template<int numOfDataPoints>
-    bool                                    wrap(blDataType (&staticArray)[numOfDataPoints],
-                                                 int optionalNumOfRows = 1,
-                                                 int optionalNumOfCols = numOfDataPoints);
+    bool                                    wrap1DArray(blDataType (&staticArray)[numOfDataPoints],
+                                                        int optionalNumOfRows = 1,
+                                                        int optionalNumOfCols = numOfDataPoints);
 
     template<int numOfDataPoints>
-    bool                                    clone(const blDataType (&staticArray)[numOfDataPoints],
-                                                  int optionalNumOfRows = 1,
-                                                  int optionalNumOfCols = numOfDataPoints);
+    bool                                    clone1DArray(const blDataType (&staticArray)[numOfDataPoints],
+                                                         int optionalNumOfRows = 1,
+                                                         int optionalNumOfCols = numOfDataPoints);
 
     template<int numOfRows,int numOfCols>
-    bool                                    wrap(blDataType (&staticArray)[numOfRows][numOfCols]);
+    bool                                    wrap2DArray(blDataType (&staticArray)[numOfRows][numOfCols]);
 
     template<typename blDataType2,int numOfRows,int numOfCols>
-    bool                                    clone(const blDataType2 (&staticArray)[numOfRows][numOfCols]);
+    bool                                    clone2DArray(const blDataType2 (&staticArray)[numOfRows][numOfCols]);
 
     // NOTE:  These functions assume
     // that the passed vector defines
@@ -93,10 +93,10 @@ public: // Public functions
     // - operator[]()
 
     template<typename vectorType>
-    bool                                    wrap(vectorType& vectorToWrap);
+    bool                                    wrapVector(vectorType& vectorToWrap);
 
     template<typename vectorType>
-    bool                                    clone(const vectorType& vectorToClone);
+    bool                                    cloneVector(const vectorType& vectorToClone);
 };
 //-------------------------------------------------------------------
 
@@ -120,9 +120,9 @@ inline blImage5<blDataType>::blImage5(const blImage5<blDataType>& Image5) : blIm
 //-------------------------------------------------------------------
 template<typename blDataType>
 template<int numOfDataPoints>
-inline bool blImage5<blDataType>::wrap(blDataType (&staticArray)[numOfDataPoints],
-                                       int optionalNumOfRows,
-                                       int optionalNumOfCols)
+inline bool blImage5<blDataType>::wrap1DArray(blDataType (&staticArray)[numOfDataPoints],
+                                              int optionalNumOfRows,
+                                              int optionalNumOfCols)
 {
     // First we check the
     // size of the passed
@@ -205,9 +205,9 @@ inline bool blImage5<blDataType>::wrap(blDataType (&staticArray)[numOfDataPoints
 //-------------------------------------------------------------------
 template<typename blDataType>
 template<int numOfDataPoints>
-inline bool blImage5<blDataType>::clone(const blDataType (&staticArray)[numOfDataPoints],
-                                        int optionalNumOfRows,
-                                        int optionalNumOfCols)
+inline bool blImage5<blDataType>::clone1DArray(const blDataType (&staticArray)[numOfDataPoints],
+                                               int optionalNumOfRows,
+                                               int optionalNumOfCols)
 {
     // First we check the
     // size of the passed
@@ -281,7 +281,7 @@ inline bool blImage5<blDataType>::clone(const blDataType (&staticArray)[numOfDat
 //-------------------------------------------------------------------
 template<typename blDataType>
 template<int numOfRows,int numOfCols>
-inline bool blImage5<blDataType>::wrap(blDataType (&staticArray)[numOfRows][numOfCols])
+inline bool blImage5<blDataType>::wrap2DArray(blDataType (&staticArray)[numOfRows][numOfCols])
 {
     // First we check the
     // size of the passed
@@ -358,7 +358,7 @@ inline bool blImage5<blDataType>::wrap(blDataType (&staticArray)[numOfRows][numO
 //-------------------------------------------------------------------
 template<typename blDataType>
 template<typename blDataType2,int numOfRows,int numOfCols>
-inline bool blImage5<blDataType>::clone(const blDataType2 (&staticArray)[numOfRows][numOfCols])
+inline bool blImage5<blDataType>::clone2DArray(const blDataType2 (&staticArray)[numOfRows][numOfCols])
 {
     // First we check the
     // size of the passed
@@ -429,7 +429,7 @@ inline bool blImage5<blDataType>::clone(const blDataType2 (&staticArray)[numOfRo
 //-------------------------------------------------------------------
 template<typename blDataType>
 template<typename vectorType>
-inline bool blImage5<blDataType>::wrap(vectorType& vectorToWrap)
+inline bool blImage5<blDataType>::wrapVector(vectorType& vectorToWrap)
 {
     // We need to create
     // an IplImage header
@@ -495,7 +495,7 @@ inline bool blImage5<blDataType>::wrap(vectorType& vectorToWrap)
 //-------------------------------------------------------------------
 template<typename blDataType>
 template<typename vectorType>
-inline bool blImage5<blDataType>::clone(const vectorType& vectorToClone)
+inline bool blImage5<blDataType>::cloneVector(const vectorType& vectorToClone)
 {
     // We make sure that
     // the image is of
