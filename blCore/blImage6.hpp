@@ -16,7 +16,7 @@
 //                     by an image (Individual pixels)
 //                  -- It also adds a function to grow an image by
 //                     increasing the image's size and setting the
-//                     newly added pixels to black/zero
+//                     newly added pixels to a specified value
 //
 // AUTHOR:          Vincenzo Barbato
 //                  http://www.barbatolabs.com
@@ -151,10 +151,11 @@ public: // Public functions
     // Function used to grow an image
     // by increasing the image's size
     // and setting the newly added pixels
-    // to black/zero
+    // to a specified value
 
-    void                                growImageWithBlackPixels(const int& numberOfExtraRows,
-                                                                 const int& numberOfExtraCols);
+    void                                growImageWithPixelValue(const int& numberOfExtraRows,
+                                                                const int& numberOfExtraCols,
+                                                                const blDataType& pixelValue);
 };
 //-------------------------------------------------------------------
 
@@ -358,8 +359,9 @@ inline void blImage6<blDataType>::copyImage(const blImage6<blDataType2>& srcImag
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline void blImage6<blDataType>::growImageWithBlackPixels(const int& numberOfExtraRows,
-                                                           const int& numberOfExtraCols)
+inline void blImage6<blDataType>::growImageWithPixelValue(const int& numberOfExtraRows,
+                                                          const int& numberOfExtraCols,
+                                                          const blDataType& pixelValue)
 {
     // First we check to make sure we
     // actually have to add new rows
@@ -381,7 +383,7 @@ inline void blImage6<blDataType>::growImageWithBlackPixels(const int& numberOfEx
     // to black/zeros
 
     blImage6<blDataType> grownImage;
-    grownImage.create(this->size1() + numberOfExtraRows,this->size2() + numberOfExtraCols,blDataType(0));
+    grownImage.create(this->size1() + numberOfExtraRows,this->size2() + numberOfExtraCols,pixelValue);
 
 
 
@@ -402,7 +404,7 @@ inline void blImage6<blDataType>::growImageWithBlackPixels(const int& numberOfEx
     // therefore releasing this image and only
     // retaining the grown one
 
-    this->m_sharedImagePtr = grownImage.getSharedImagePtr();
+    this->m_imageSharedPtr = grownImage.getImageSharedPtr();
 }
 //-------------------------------------------------------------------
 
