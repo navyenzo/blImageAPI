@@ -1,5 +1,4 @@
 # blImageAPI
-============
 
 [blImageAPI](https://github.com/navyenzo/blImageAPI.git) is a library that wraps opencv's IplImage* images with a std::shared_ptr smart pointer and makes IplImage* images work with any type of data, work similar to std::vector and work with STL algorithms
 
