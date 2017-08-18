@@ -26,7 +26,9 @@
 
 * For example, creating a 10x10 image/matrix of double values, initializing its entries to -7.3:
 
-..* `blImageAPI::blImage<double> myMatrix(10,10,-7.3);`
+```c++
+blImageAPI::blImage<double> myMatrix(10,10,-7.3);
+```
 
 * Or using it in an STL algorithm such as `std::copy`:
 
