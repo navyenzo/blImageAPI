@@ -30,21 +30,25 @@
 
 * Or using it in an STL algorithm such as `std::copy`:
 
-     `// Create and initialize an unsigned char image
+```c++
 
-     blImageAPI::blImage<unsigned char> myWord(1,1000,'\0');
-    
-     // A string we will copy into the unsigned char image
+ // Create and initialize an unsigned char image
 
-     std::string hello = "hello world\n";
-    
-     // Copying the string
+ blImageAPI::blImage<unsigned char> myWord(1,1000,'\0');
 
-     std::copy(hello.begin(),hello.end(),myWord.begin());
-    
-     // Outputting the image to the standard console
+ // A string we will copy into the unsigned char image
 
-     std::cout << myWord << "\n\n";`
+ std::string hello = "hello world\n";
+
+ // Copying the string
+
+ std::copy(hello.begin(),hello.end(),myWord.begin());
+
+ // Outputting the image to the standard console
+
+ std::cout << myWord << "\n\n";
+	 
+ ```
 
 
 
