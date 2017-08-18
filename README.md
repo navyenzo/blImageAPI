@@ -18,7 +18,11 @@
 
 ## How do I use it?
 
-* The library is a header only template library that you can use by just including its header as follows: `#include <blImage.hpp>`
+* The library is a header only template library that you can use by just including its header as follows:
+
+```c++
+#include <blImage.hpp>
+```
 
 * It defines everything inside the `blImageAPI` namespace
 
