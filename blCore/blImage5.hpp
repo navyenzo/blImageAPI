@@ -185,7 +185,7 @@ inline bool blImage5<blDataType>::wrap1DArray(blDataType (&staticArray)[numOfDat
     // release it once it runs
     // out of scope
 
-    this->m_imageSharedPtr = blIteratorAPI::get_shared_ptr(NewImageHeader);
+    this->m_imageSharedPtr = get_shared_ptr(NewImageHeader);
 
     // We always set the ROI
     // so that when we check the
@@ -338,7 +338,7 @@ inline bool blImage5<blDataType>::wrap2DArray(blDataType (&staticArray)[numOfRow
     // release it once it runs
     // out of scope
 
-    this->m_imageSharedPtr = blIteratorAPI::get_shared_ptr(NewImageHeader);
+    this->m_imageSharedPtr = get_shared_ptr(NewImageHeader);
 
     // We always set the ROI
     // so that when we check the
@@ -475,7 +475,7 @@ inline bool blImage5<blDataType>::wrapVector(vectorType& vectorToWrap)
     // release it once it runs
     // out of scope
 
-    this->m_imageSharedPtr = blIteratorAPI::get_shared_ptr(NewImageHeader);
+    this->m_imageSharedPtr = get_shared_ptr(NewImageHeader);
 
     // We always set the ROI
     // so that when we check the

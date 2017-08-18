@@ -35,8 +35,6 @@
 
 #include <blMathAPI/blMathAPI.hpp>
 
-#include <blIteratorAPI/blIteratorAPI.hpp>
-
 #include <opencv2/opencv.hpp>
 
 //-------------------------------------------------------------------
@@ -65,6 +63,14 @@ namespace blImageAPI
     // form to another
 
     #include "blAlgorithms/blConversions.hpp"
+
+
+
+
+    // A collection of simple functions used to
+    // get smart pointers of resources
+
+    #include "blAlgorithms/blSmartPointerFunctions.hpp"
 
 
 

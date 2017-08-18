@@ -321,7 +321,7 @@ inline bool blImage3<blDataType>::wrap(IplImage*& imageToWrap,
             // so we wrap it using
             // a null_deleter
 
-            this->m_imageSharedPtr = blIteratorAPI::get_shared_ptr(imageToWrap);
+            this->m_imageSharedPtr = get_shared_ptr(imageToWrap);
         }
 
         return true;
