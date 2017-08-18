@@ -30,7 +30,7 @@
 
 * Or using it in an STL algorithm such as `std::copy`:
 
-⋅⋅* `// Create and initialize an unsigned char image
+     `// Create and initialize an unsigned char image
 
      blImageAPI::blImage<unsigned char> myWord(1,1000,'\0');
     
