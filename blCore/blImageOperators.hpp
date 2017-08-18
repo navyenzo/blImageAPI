@@ -45,6 +45,7 @@
 // The following function converts
 // a blImage to a cv::Mat structure
 //-------------------------------------------------------------------
+#ifdef OPENCV_CORE_MAT_HPP
 template<typename blDataType>
 
 inline cv::Mat blImageToMat(const blImage<blDataType>& img,
@@ -54,6 +55,7 @@ inline cv::Mat blImageToMat(const blImage<blDataType>& img,
 {
     return ( cvarrToMat(img.getImagePtr(),copyData,allowND,coiMode) );
 }
+#endif
 //-------------------------------------------------------------------
 
 

@@ -145,21 +145,6 @@ public: // Overloaded operators
 
 
 
-    // Operators used to
-    // convert this image
-    // to a cv::Mat image
-
-    #ifdef OPENCV_CORE_MAT_HPP
-
-        operator cv::Mat()
-        {
-            return ( cvarrToMat(this->getImagePtr(),false,true,1) );
-        }
-
-    #endif
-
-
-
 public: // Public functions
 
 

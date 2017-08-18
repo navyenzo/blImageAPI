@@ -30,6 +30,14 @@
 blImageAPI::blImage<double> myMatrix(10,10,-7.3);
 ```
 
+* Or for example, creating a 100x150 black image or red image
+
+```c++
+blImageAPI::blImage< blColor3<unsigned char> > myBlackImg(100,150,blColor3<unsigned char>(0,0,0));
+
+blImageAPI::blImage< blColor3<unsigned char> > myRedImg(100,150,blColor3<unsigned char>(0,0,255));
+```
+
 * Or using it in an STL algorithm such as `std::copy`:
 
 ```c++
@@ -51,7 +59,23 @@ blImageAPI::blImage<double> myMatrix(10,10,-7.3);
  std::cout << myWord << "\n\n";
 	 
  ```
+ 
+> It outputs the following:
+ 
+ ```c++
+1 1000
+0
+0 0 1 1000
+h e l l o   w o r l d
+```
+> Which is formatted as follows:
 
+```c++
+imageRows imageColumns
+COI (Channel Of Interest)
+ROI (Region Of Interest)
+data (What's stored in the image)
+```
 
 
 ## Dependencies
@@ -60,7 +84,7 @@ blImageAPI::blImage<double> myMatrix(10,10,-7.3);
 
 * [blMathAPI library (another one of my very light weight header only libraries)](https://github.com/navyenzo/blMathAPI.git)
 
-* <memory> from the STL library (used for std::shared_ptr smart pointers)
+* `#include <memory>` from the STL library (used for std::shared_ptr smart pointers)
 
 ## License?
 
