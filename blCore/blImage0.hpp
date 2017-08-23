@@ -153,7 +153,7 @@ public: // Overloaded operators
 
         operator cv::Mat()
         {
-            return ( cvarrToMat(this->getImagePtr(),false,true,1) );
+            return ( cv::cvarrToMat(this->getImagePtr(),false,true,1) );
         }
 
     #endif

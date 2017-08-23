@@ -180,6 +180,24 @@ public: // Public functions
     void                                    setROIheightAndwidth(const int& height,
                                                                  const int& width,
                                                                  const bool& shouldImageBeResizedToAccomodateForBiggerROI = false);
+
+    // Functions used to scale/shift
+    // the ROI, with the option of
+    // growing the image if necessary
+
+    void                                    scaleROI(const int& rowScaleFactor,
+                                                     const int& colScaleFactor,
+                                                     const bool& shouldImageBeResizedToAccomodateForBiggerROI = false);
+
+    void                                    shiftROI(const int& rowOffset,
+                                                     const int& colOffsett,
+                                                     const bool& shouldImageBeResizedToAccomodateForBiggerROI = false);
+
+    // Function used to set a
+    // default ROI in case it
+    // isn't set
+
+    void                                    setROIinCaseItIsNotSet();
 };
 //-------------------------------------------------------------------
 
@@ -597,7 +615,8 @@ inline void blImage2<blDataType>::setROI(const CvRect& ROIrect,
 
             blImage2<blDataType> paddedImage;
             paddedImage.create(std::max(ROIrect.y + ROIrect.height,int(this->size1())),
-                               std::max(ROIrect.x + ROIrect.width,int(this->size2())));
+                               std::max(ROIrect.x + ROIrect.width,int(this->size2())),
+                               blDataType(0));
 
             // Copy the original
             // image into the padded
@@ -611,7 +630,7 @@ inline void blImage2<blDataType>::setROI(const CvRect& ROIrect,
                 }
             }
 
-            paddedImage.setROI(ROIrect);
+            paddedImage.setROI(ROIrect,false);
 
             // Finally we save the
             // padded image into this
@@ -659,7 +678,7 @@ template<typename blDataType>
 inline void blImage2<blDataType>::setROIx(const int& x,
                                           const bool& shouldImageBeResizedToAccomodateForBiggerROI)
 {
-    CvRect ROIRect = this->getROI();
+    CvRect ROIRect = this->getROIRect();
 
     ROIRect.x = x;
 
@@ -673,7 +692,7 @@ template<typename blDataType>
 inline void blImage2<blDataType>::setROIy(const int& y,
                                           const bool& shouldImageBeResizedToAccomodateForBiggerROI)
 {
-    CvRect ROIRect = this->getROI();
+    CvRect ROIRect = this->getROIRect();
 
     ROIRect.y = y;
 
@@ -687,7 +706,7 @@ template<typename blDataType>
 inline void blImage2<blDataType>::setROIi(const int& index,
                                           const bool& shouldImageBeResizedToAccomodateForBiggerROI)
 {
-    CvRect ROIRect = this->getROI();
+    CvRect ROIRect = this->getROIRect();
 
     ROIRect.y = index / this->size2();
     ROIRect.x = index % this->size2();
@@ -702,7 +721,7 @@ template<typename blDataType>
 inline void blImage2<blDataType>::setROIwidth(const int& width,
                                               const bool& shouldImageBeResizedToAccomodateForBiggerROI)
 {
-    CvRect ROIRect = this->getROI();
+    CvRect ROIRect = this->getROIRect();
 
     ROIRect.width = width;
 
@@ -716,7 +735,7 @@ template<typename blDataType>
 inline void blImage2<blDataType>::setROIheight(const int& height,
                                                const bool& shouldImageBeResizedToAccomodateForBiggerROI)
 {
-    CvRect ROIRect = this->getROI();
+    CvRect ROIRect = this->getROIRect();
 
     ROIRect.height = height;
 
@@ -731,10 +750,52 @@ inline void blImage2<blDataType>::setROIheightAndwidth(const int& height,
                                                        const int& width,
                                                        const bool& shouldImageBeResizedToAccomodateForBiggerROI)
 {
-    CvRect ROIRect = this->getROI();
+    CvRect ROIRect = this->getROIRect();
 
     ROIRect.height = height;
     ROIRect.width = width;
+
+    this->setROI(ROIRect,shouldImageBeResizedToAccomodateForBiggerROI);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline void blImage2<blDataType>::setROIinCaseItIsNotSet()
+{
+    if(!this->m_imageSharedPtr->roi)
+        cvSetImageROI((*this),CvRect(0,0,this->size2(),this->size1()));
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline void blImage2<blDataType>::scaleROI(const int& rowScaleFactor,
+                                           const int& colScaleFactor,
+                                           const bool& shouldImageBeResizedToAccomodateForBiggerROI)
+{
+    CvRect ROIRect = this->getROIRect();
+
+    ROIRect.height *= rowScaleFactor;
+    ROIRect.width *= colScaleFactor;
+
+    this->setROI(ROIRect,shouldImageBeResizedToAccomodateForBiggerROI);
+}
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+inline void blImage2<blDataType>::shiftROI(const int& rowOffset,
+                                           const int& colOffset,
+                                           const bool& shouldImageBeResizedToAccomodateForBiggerROI)
+{
+    CvRect ROIRect = this->getROIRect();
+
+    ROIRect.y += rowOffset;
+    ROIRect.x += colOffset;
 
     this->setROI(ROIRect,shouldImageBeResizedToAccomodateForBiggerROI);
 }

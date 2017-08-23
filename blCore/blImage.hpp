@@ -96,6 +96,12 @@ public: // Constructors and destructors
     template<typename blDataType2,int numOfRows,int numOfCols>
     blImage(const blDataType2 (&staticArray)[numOfRows][numOfCols]);
 
+    // Construct from a cv::Mat
+
+    #ifdef OPENCV_CORE_MAT_HPP
+    inline blImage(cv::Mat& img);
+    #endif
+
     // Destructor
 
     ~blImage()
@@ -113,6 +119,10 @@ public: // Assignment operators
     blImage<blDataType>&                            operator=(const blDataType (&staticArray)[numOfRows][numOfCols]);
     template<typename blDataType2,int numOfRows,int numOfCols>
     blImage<blDataType>&                            operator=(const blDataType2 (&staticArray)[numOfRows][numOfCols]);
+
+    #ifdef OPENCV_CORE_MAT_HPP
+    inline blImage<blDataType>&                     operator=(cv::Mat& img);
+    #endif
 };
 //-------------------------------------------------------------------
 
@@ -256,6 +266,29 @@ inline blImage<blDataType>::blImage(const blDataType2 (&staticArray)[numOfRows][
 
 
 //-------------------------------------------------------------------
+#ifdef OPENCV_CORE_MAT_HPP
+template<typename blDataType>
+
+inline blImage<blDataType>::blImage(cv::Mat& img)
+{
+    // We wrap the cv::Mat with a blImage
+    // without actually copying the data
+    // and without being in charge of releasing
+    // the image data
+
+    IplImage imgIplImage = img;
+    IplImage* imgPtr = &imgIplImage;
+
+    // We try to wrap otherwise
+    // we clone
+
+    this->clone(imgPtr);
+}
+#endif
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
 template<typename blDataType>
 inline blImage<blDataType>& blImage<blDataType>::operator=(const blImage<blDataType>& image)
 {
@@ -331,6 +364,34 @@ inline blImage<blDataType>& blImage<blDataType>::operator=(const blDataType2 (&s
 
     return (*this);
 }
+//-------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+#ifdef OPENCV_CORE_MAT_HPP
+template<typename blDataType>
+
+inline blImage<blDataType>& blImage<blDataType>::operator=(cv::Mat& img)
+{
+    // We wrap the cv::Mat with a blImage
+    // without actually copying the data
+    // and without being in charge of releasing
+    // the image data
+
+    // We try to wrap otherwise
+    // we clone
+
+    IplImage imgIplImage = img;
+    IplImage* imgPtr = &imgIplImage;
+
+    // We try to wrap otherwise
+    // we clone
+
+    this->clone(imgPtr);
+
+    return (*this);
+}
+#endif
 //-------------------------------------------------------------------
 
 

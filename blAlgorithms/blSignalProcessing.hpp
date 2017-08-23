@@ -2,6 +2,7 @@
 #define BL_SIGNALPROCESSING_HPP
 
 
+
 //-------------------------------------------------------------------
 // FILE:            blSignalProcessing.hpp
 // CLASS:           None
@@ -21,11 +22,6 @@
 //-------------------------------------------------------------------
 
 
-//-------------------------------------------------------------------
-// Includes and libs needed for this file and sub-files
-//-------------------------------------------------------------------
-//-------------------------------------------------------------------
-
 
 //-------------------------------------------------------------------
 // Enums used for this file and sub-files
@@ -39,6 +35,7 @@ enum blFilterTypeEnum {BL_LOWPASS,
 enum blFilterFunctionTypeEnum {BL_BUTTERWORTH,
                                BL_GAUSSIAN};
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -72,6 +69,7 @@ inline int frequencyIndexForShiftedData(const double& frequencyOfInterest,
     return index;
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -136,6 +134,7 @@ inline void generateFrequencyAxis(blImage<blDataType>& frequencyAxis,
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 // The following function shifts
 // the DFT output to center the
@@ -165,6 +164,7 @@ inline void shiftImageForFourierTransform(blImage<blDataType>& img)
     }
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -201,6 +201,7 @@ inline void shiftImageForFourierTransform(const blImage<blDataType>& srcImg,
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 // The following functions take the
 // forward fast fourier transform
@@ -224,6 +225,7 @@ inline void fft2(const blImage<blDataType>& srcImage,
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -237,6 +239,7 @@ inline blImage< std::complex<blDataType> > fft2(const blImage<blDataType>& srcIm
     return fft2Image;
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -262,6 +265,7 @@ inline void ifft2(const blImage< std::complex<blDataType> >& srcImage,
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -275,6 +279,7 @@ inline blImage<blDataType> ifft2(const blImage< std::complex<blDataType> >& srcI
     return ifft2Image;
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -343,6 +348,7 @@ inline void fftPowerSpectrum(const blImage< std::complex<blDataType> >& srcImage
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -360,6 +366,7 @@ inline blImage<blDataType> fftPowerSpectrum(const blImage< std::complex<blDataTy
     return powerSpectrumImage;
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -431,6 +438,7 @@ inline void fftFourierSpectrum(const blImage< std::complex<blDataType> >& fftCom
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -448,6 +456,7 @@ inline blImage<blDataType> fftFourierSpectrum(const blImage< std::complex<blData
     return fourierSpectrum;
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -518,6 +527,7 @@ inline void fftPhaseAngle(const blImage< std::complex<blDataType> >& fftComplexI
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -535,6 +545,7 @@ inline blImage<blDataType> fftPhaseAngle(const blImage< std::complex<blDataType>
     return phaseAngleImg;
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -632,6 +643,7 @@ inline void fftFourierSpectrumAndPhaseAngle(const blImage< std::complex<blDataTy
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 // The following functions calculate
 // the fourier transform of an image
@@ -689,6 +701,7 @@ inline void fftComplexImageFromFourierSpectrumAndPhaseAngle(const blImage<blData
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 template<typename blDataType>
 
@@ -704,6 +717,7 @@ inline blImage< std::complex<blDataType> > fftComplexImageFromFourierSpectrumAnd
     return fftComplexImage;
 }
 //-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -846,6 +860,7 @@ inline void filterMask(blImage<blDataType>& dstImage,
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 // The following functions build
 // vectors of images used for storing
@@ -853,10 +868,13 @@ inline void filterMask(blImage<blDataType>& dstImage,
 //-------------------------------------------------------------------
 
 
-//-------------------------------------------------------------------
-template<typename blDataType>
 
-inline int calculateMaxNumberOfPyramidLevel(const blImage<blDataType>& srcImage)
+//-------------------------------------------------------------------
+// These functions calculate the maximum number
+// of pyramid levels available for a specified
+// source image
+//-------------------------------------------------------------------
+inline int calculateMaxNumberOfPyramidLevels(const int& size1ROI,const int& size2ROI)
 {
     // When using cvPyrDown, the size
     // of the down pyramid is calculated
@@ -873,10 +891,396 @@ inline int calculateMaxNumberOfPyramidLevel(const blImage<blDataType>& srcImage)
     // which is translated to:
     // m = ln(n+1)/ln(2)
 
-    return ( std::log(double(std::min(srcImage.size1ROI(),srcImage.size2ROI()))) /
+    return ( std::log(double(std::min(size1ROI,size2ROI))) /
              std::log(double(2.0)) );
 }
+
+
+
+template<typename blDataType>
+
+inline int calculateMaxNumberOfPyramidLevels(const blImage<blDataType>& srcImage)
+{
+    return calculateMaxNumberOfPyramidLevels(srcImage.size1ROI(),srcImage.size2ROI());
+}
 //-------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------
+// This function sets the ROI in a pyramid image to
+// point to a specified pyramid level in the pyramid
+// image
+// This function assumes that the pyramid image is
+// formatted so that the level 0 image is on the left
+// side and all the higher levels are on the right
+// side aligned vertically
+//-------------------------------------------------------------------
+template<typename blDataType>
+
+inline void setROIofPyramidforSpecifiedLevel(blImage<blDataType>& pyramidImage,
+                                             const int& level,
+                                             const int& pyramidImageStartingYROI,
+                                             const int& pyramidImageStartingXROI,
+                                             const int& srcImageRows,
+                                             const int& srcImageCols)
+{
+    if(level <= 0)
+    {
+        pyramidImage.setROI(pyramidImageStartingYROI,
+                            pyramidImageStartingXROI,
+                            srcImageRows,
+                            srcImageCols,
+                            true);
+    }
+    else
+    {
+        int rows = srcImageRows;
+        int cols = srcImageCols;
+
+        int yROI = pyramidImageStartingYROI;
+
+        for(int i = 0; i < level; ++i)
+        {
+            if(i > 0)
+                yROI += rows;
+
+            rows = (rows + 1)/2;
+            cols = (cols + 1)/2;
+        }
+
+        pyramidImage.setROI(yROI,
+                            pyramidImageStartingXROI + srcImageCols,
+                            rows,
+                            cols,
+                            true);
+    }
+}
+//-------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------
+// This function builds a gaussian pyramid from a specified
+// source image onto a specified guassian pyramid image, laying
+// level 0 image on the left side and the higher level images
+// on the right side aligned vertically
+//-------------------------------------------------------------------
+template<typename blDataType>
+
+inline blImage<blDataType>& buildGaussianPyramid(const blImage<blDataType>& srcImage,
+                                                 blImage<blDataType>& workerImage,
+                                                 blImage<blDataType>& gaussianPyramidImage,
+                                                 const int& filterType = CV_GAUSSIAN_5x5)
+{
+    // Get the source image ROI size
+
+    int srcImageRows = srcImage.size1ROI();
+    int srcImageCols = srcImage.size2ROI();
+
+
+
+    // Count the number of possible
+    // pyramid levels
+
+    int maxNumberOfPyramidLevels = calculateMaxNumberOfPyramidLevels(srcImageRows,srcImageCols);
+
+
+
+    // Get the starting coordinates of the
+    // pyramid image ROI
+
+    int gaussian_starting_yROI = gaussianPyramidImage.yROI();
+    int gaussian_starting_xROI = gaussianPyramidImage.xROI();
+
+
+
+    // The first image (level 0) in the
+    // gaussian pyramid is the source image
+    // which we copy to the left/top
+    // side of the gaussian pyramid
+
+    setROIofPyramidforSpecifiedLevel(gaussianPyramidImage,
+                                     0,
+                                     gaussian_starting_yROI,
+                                     gaussian_starting_xROI,
+                                     srcImageRows,
+                                     srcImageCols);
+
+    cvCopy(srcImage,gaussianPyramidImage);
+
+
+
+    // Now that we have copied the
+    // source image, we move to the
+    // right of it and start creating
+    // the increasigly smaller gaussian
+    // images
+
+
+
+    // The starting pyramid level
+
+    int level = 1;
+
+
+
+    // Let's loop and create the gaussian images
+
+    while(level < maxNumberOfPyramidLevels)
+    {
+        // The first thing is copy the previous
+        // level gaussian to our worker image
+
+        workerImage.setROI(0,0,gaussianPyramidImage.size1ROI(),gaussianPyramidImage.size2ROI(),true);
+        cvCopy(gaussianPyramidImage,workerImage);
+
+
+
+        // We then set the ROI in the pyramid
+        // image for the current level
+
+        setROIofPyramidforSpecifiedLevel(gaussianPyramidImage,
+                                         level,
+                                         gaussian_starting_yROI,
+                                         gaussian_starting_xROI,
+                                         srcImageRows,
+                                         srcImageCols);
+
+
+
+        // Here we downsample the worker image
+        // into the pyramid image
+
+        cvPyrDown(workerImage,gaussianPyramidImage,filterType);
+
+
+
+        // Let's move on to the next level
+
+        ++level;
+    }
+
+
+
+    // Let's not forget to reset the
+    // ROI coordinates for the pyramid
+    // image
+
+    gaussianPyramidImage.setROI(gaussian_starting_yROI,
+                                gaussian_starting_xROI,
+                                srcImageRows,
+                                srcImageCols + (srcImageCols + 1)/2,
+                                false);
+
+
+
+    // Let's return the pyramid image
+
+    return gaussianPyramidImage;
+}
+//-------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------
+// This function builds a laplacian pyramid from a specified
+// source image and a specified gaussian pyramid, laying
+// level 0 image on the left side and the higher level images
+// on the right side aligned vertically
+//-------------------------------------------------------------------
+template<typename blDataType>
+
+inline blImage<blDataType>& buildLaplacianPyramid(const blImage<blDataType>& srcImage,
+                                                  blImage<blDataType>& workerImage,
+                                                  blImage<blDataType>& gaussianPyramidImage,
+                                                  blImage<blDataType>& laplacianPyramidImage,
+                                                  const int& filterType = CV_GAUSSIAN_5x5)
+{
+    // Get the source image ROI size
+
+    int srcImageRows = srcImage.size1ROI();
+    int srcImageCols = srcImage.size2ROI();
+
+
+
+    // Count the number of possible
+    // pyramid levels
+
+    int maxNumberOfPyramidLevels = calculateMaxNumberOfPyramidLevels(srcImageRows,srcImageCols);
+
+
+
+    // Get the starting coordinates of the
+    // pyramid images ROIs
+
+    int gaussian_starting_yROI = gaussianPyramidImage.yROI();
+    int gaussian_starting_xROI = gaussianPyramidImage.xROI();
+
+    int laplacian_starting_yROI = laplacianPyramidImage.yROI();
+    int laplacian_starting_xROI = laplacianPyramidImage.xROI();
+
+
+
+    // The starting pyramid level
+
+    int level = 0;
+
+
+
+    // Let's loop and create the gaussian images
+
+    while(level < maxNumberOfPyramidLevels)
+    {
+        // The first thing we do is set the ROIs
+        // for the laplacian pyramid
+
+        setROIofPyramidforSpecifiedLevel(laplacianPyramidImage,
+                                         level,
+                                         laplacian_starting_yROI,
+                                         laplacian_starting_yROI,
+                                         srcImageRows,
+                                         srcImageCols);
+
+
+
+        // Next we have to make sure the worker
+        // image has the same ROI
+
+        workerImage.setROI(0,0,laplacianPyramidImage.size1ROI(),laplacianPyramidImage.size2ROI());
+
+
+
+        // We then set the ROI for the gaussian
+        // pyramid (it has to be one level up so
+        // we can upsample it)
+
+        setROIofPyramidforSpecifiedLevel(gaussianPyramidImage,
+                                         level + 1,
+                                         gaussian_starting_yROI,
+                                         gaussian_starting_xROI,
+                                         srcImageRows,
+                                         srcImageCols);
+
+
+
+        // Here we upsample the current gaussian
+        // image into the worker image
+
+        cvPyrUp(gaussianPyramidImage,workerImage);
+
+
+
+        // Now once again we have to change the
+        // ROI of the gaussian pyramid and set
+        // it to the current pyramid level
+
+        setROIofPyramidforSpecifiedLevel(gaussianPyramidImage,
+                                         level,
+                                         gaussian_starting_yROI,
+                                         gaussian_starting_xROI,
+                                         srcImageRows,
+                                         srcImageCols);
+
+
+
+        // Finally we subtract the current
+        // level gaussian image with the
+        // upsampled one and save the result
+        // into the laplacian pyramid
+
+        cvSub(gaussianPyramidImage,
+              workerImage,
+              laplacianPyramidImage,
+              NULL);
+
+
+
+        // Let's move on to the next level
+
+        ++level;
+    }
+
+
+
+    // Let's not forget to reset the
+    // ROI coordinates for both of the
+    // pyramid images
+
+    gaussianPyramidImage.setROI(gaussian_starting_yROI,
+                                gaussian_starting_xROI,
+                                srcImageRows,
+                                srcImageCols + (srcImageCols + 1)/2,
+                                false);
+
+    laplacianPyramidImage.setROI(laplacian_starting_yROI,
+                                 laplacian_starting_xROI,
+                                 srcImageRows,
+                                 srcImageCols + (srcImageCols + 1)/2,
+                                 false);
+
+
+
+    // Let's return the pyramid image
+
+    return gaussianPyramidImage;
+}
+//-------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------
+template<typename blDataType>
+
+inline std::vector< blImage<blDataType> >& initializePyramidVector(const blImage<blDataType>& srcImage,
+                                                                   std::vector< blImage<blDataType> >& imageVector)
+{
+    // We count the number of possible
+    // image pyramid levels and make sure
+    // the image vector has enough images
+    // matching the source image ROI
+
+    int maxNumberOfPyramidLevels = calculateMaxNumberOfPyramidLevels(srcImage);
+
+    if(imageVector.size() < maxNumberOfPyramidLevels)
+    {
+        // First we reserve the right
+        // number of places in the vector
+
+        imageVector.reserve(maxNumberOfPyramidLevels);
+
+
+
+        // We then first make sure that the
+        // images that were already in the image
+        // vector have the correct ROIs
+
+        auto ROI = srcImage.getROIRect();
+
+        for(int i = 0; i < imageVector.size(); ++i)
+        {
+            imageVector[i].setROI(ROI,true);
+        }
+
+
+
+        // Finally we add the other images the
+        // image vector didn't have yet
+
+        int numberOfExtraImagesNeeded = maxNumberOfPyramidLevels - imageVector.size();
+
+        for(int i = 0; i < numberOfExtraImagesNeeded; ++i)
+        {
+            blImage<blDataType> newImg(srcImage.size1ROI(),srcImage.size2ROI());
+
+            imageVector.push_back(newImg);
+        }
+    }
+
+    return imageVector;
+}
+//-------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------------
@@ -901,12 +1305,12 @@ inline void buildGaussianPyramids(blImage<blDataType>& srcImage,
     // allowable pyramid levels based
     // on the size of the source image
 
-    int maxNumberOfPyramidLevels = calculateMaxNumberOfPyramidLevel(srcImage);
+    int maxNumberOfPyramidLevels = calculateMaxNumberOfPyramidLevels(srcImage);
 
     // The first image (level 0)
     // is the source image
 
-    iteratorToBeginningOfGaussianPyramid->wrap(srcImage);
+    iteratorToBeginningOfGaussianPyramid->clone(srcImage);
 
     auto iteratorToPreviousImage = iteratorToBeginningOfGaussianPyramid;
 
@@ -947,6 +1351,7 @@ inline void buildGaussianPyramids(blImage<blDataType>& srcImage,
 //-------------------------------------------------------------------
 
 
+
 //-------------------------------------------------------------------
 template<typename blGaussianPyramidIteratorType,
          typename blLaplacianPyramidIteratorType>
@@ -954,7 +1359,7 @@ template<typename blGaussianPyramidIteratorType,
 inline void buildLaplacianPyramids(const blGaussianPyramidIteratorType& iteratorToBeginningOfGaussianPyramid,
                                    const blGaussianPyramidIteratorType& iteratorToEndOfGaussianPyramid,
                                    blLaplacianPyramidIteratorType iteratorToBeginningOfLaplacianPyramid,
-                                   const blLaplacianPyramidIteratorType& iteratorToEndOfLaplacianPyramid,
+                                   blLaplacianPyramidIteratorType iteratorToEndOfLaplacianPyramid,
                                    const int& filterType = CV_GAUSSIAN_5x5)
 {
     if(iteratorToBeginningOfGaussianPyramid == iteratorToEndOfGaussianPyramid ||
@@ -963,7 +1368,7 @@ inline void buildLaplacianPyramids(const blGaussianPyramidIteratorType& iterator
         // Either or both of the
         // pyramids are of zero
         // length and therefore
-        // we quit
+        // we quit`
 
         return;
     }
@@ -991,7 +1396,7 @@ inline void buildLaplacianPyramids(const blGaussianPyramidIteratorType& iterator
         // laplacian image if
         // needed
 
-        iteratorToCurrentLaplacianImage->setROI(iteratorToPreviousGaussianImage->getROI(),true);
+        iteratorToCurrentLaplacianImage->setROI(iteratorToPreviousGaussianImage->getROIRect(),true);
 
         // Then we upsample the
         // gaussian image
@@ -1015,6 +1420,7 @@ inline void buildLaplacianPyramids(const blGaussianPyramidIteratorType& iterator
     }
 }
 //-------------------------------------------------------------------
+
 
 
 #endif // BL_SIGNALPROCESSING_HPP

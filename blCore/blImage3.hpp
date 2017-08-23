@@ -129,7 +129,7 @@ private: // Private functions
     // of the same depth
     // and number of channels
 
-    void                                    cloneFromImageOfSameType(const IplImage* srcImage);
+    bool                                    cloneFromImageOfSameType(const IplImage* srcImage);
 
 public: // Circular iterators
 
@@ -232,6 +232,11 @@ inline bool blImage3<blType>::wrap(CvMat* imageToWrap,
     if(isThisObjectInChargeOfReleasingIplImage)
         imageToWrap = NULL;
 
+    // Let's make sure this image
+    // has a ROI set
+
+    this->setROIinCaseItIsNotSet();
+
     // Now we return
     // whether the
     // image was
@@ -324,6 +329,13 @@ inline bool blImage3<blDataType>::wrap(IplImage*& imageToWrap,
             this->m_imageSharedPtr = get_shared_ptr(imageToWrap);
         }
 
+        // Let's make sure this image
+        // has a ROI set
+
+        this->setROIinCaseItIsNotSet();
+
+
+
         return true;
     }
 }
@@ -332,13 +344,16 @@ inline bool blImage3<blDataType>::wrap(IplImage*& imageToWrap,
 
 //-------------------------------------------------------------------
 template<typename blDataType>
-inline void blImage3<blDataType>::cloneFromImageOfSameType(const IplImage* srcImage)
+inline bool blImage3<blDataType>::cloneFromImageOfSameType(const IplImage* srcImage)
 {
-    // NOTE:  This function
-    //        does not check
-    //        the validity
-    //        of the source image
-    //        pointer
+    // First we check the pointer
+
+    if(!srcImage)
+    {
+        // Invalid pointer
+
+        return false;
+    }
 
     // First we make
     // sure this image is
@@ -357,7 +372,7 @@ inline void blImage3<blDataType>::cloneFromImageOfSameType(const IplImage* srcIm
     std::copy(
               srcImage->imageData,
               srcImage->imageData + srcImage->imageSize,
-              &((*this)(0))
+              this->m_imageSharedPtr->imageData
              );
 
     // We also copy
@@ -365,6 +380,15 @@ inline void blImage3<blDataType>::cloneFromImageOfSameType(const IplImage* srcIm
     // interest (ROI)
 
     this->setROI(cvGetImageROI(srcImage));
+
+    // Let's make sure this image
+    // has a ROI set
+
+    this->setROIinCaseItIsNotSet();
+
+    // We're done
+
+    return true;
 }
 //-------------------------------------------------------------------
 
@@ -405,7 +429,14 @@ inline bool blImage3<blType>::clone(const CvMat* imageToClone,
     // the matrix
     // into this image
 
-    return (this->clone(&matToImg,inCaseOfComplexToRealConversionDoYouWantReal_0_Imaginary_1_OrAbsoluteValue_2));
+    auto wereWeSuccessful = this->clone(&matToImg,inCaseOfComplexToRealConversionDoYouWantReal_0_Imaginary_1_OrAbsoluteValue_2);
+
+    // Let's make sure this image
+    // has a ROI set
+
+    this->setROIinCaseItIsNotSet();
+
+    return wereWeSuccessful;
 }
 //-------------------------------------------------------------------
 
@@ -449,6 +480,11 @@ inline bool blImage3<blDataType>::clone(const IplImage* imageToClone,
 
         cloneFromImageOfSameType(imageToClone);
 
+        // Let's make sure this image
+        // has a ROI set
+
+        this->setROIinCaseItIsNotSet();
+
         return true;
     }
 
@@ -483,6 +519,11 @@ inline bool blImage3<blDataType>::clone(const IplImage* imageToClone,
     // interest (ROI)
 
     cvSetImageROI((*this),cvGetImageROI(imageToClone));
+
+    // Let's make sure this image
+    // has a ROI set
+
+    this->setROIinCaseItIsNotSet();
 
     // First we check
     // if the number
