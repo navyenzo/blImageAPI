@@ -300,6 +300,13 @@ namespace blImageAPI
 
 
 
+    // A collection of algorithms I wrote to facilitate
+    // the generation of image pyramids
+
+    #include "blAlgorithms/blImagePyramids.hpp"
+
+
+
     // A simple class that wraps CvFont and
     // provides easy to use text function to
     // write on images
