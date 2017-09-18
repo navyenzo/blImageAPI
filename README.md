@@ -14,7 +14,7 @@
 
 * It is an ongoing project where I collect all the various image analysis related tools I've used in the past and keep using today
 
-* Do with the source what you want, use it in a project, or use it as material
+* Do with the source what you want, use it in your own projects, or use it as learning material
 
 ## How do I use it?
 

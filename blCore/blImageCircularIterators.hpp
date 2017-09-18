@@ -448,7 +448,10 @@ inline blDataType* blImageCircularIterator<blDataType>::operator->()
     // "end" iterator, otherwise we return
     // the correct iterator
 
-    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
+    // If the max number of circulations
+    // is negative, we never stop
+
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations && m_maxNumberOfCirculations >= 0)
     {
         return &m_image.atROI(m_image.sizeROI());
     }
@@ -469,7 +472,7 @@ inline const blDataType* blImageCircularIterator<blDataType>::operator->()const
     // "end" iterator, otherwise we return
     // the correct iterator
 
-    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations && m_maxNumberOfCirculations >= 0)
     {
         return &m_image.atROI(m_image.sizeROI());
     }
@@ -490,7 +493,7 @@ inline blDataType* blImageCircularIterator<blDataType>::getRawPointer()
     // "end" iterator, otherwise we return
     // the correct iterator
 
-    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations && m_maxNumberOfCirculations >= 0)
     {
         return &m_image.atROI(m_image.sizeROI());
     }
@@ -511,7 +514,7 @@ inline const blDataType* blImageCircularIterator<blDataType>::getRawPointer()con
     // "end" iterator, otherwise we return
     // the correct iterator
 
-    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations)
+    if(std::abs(getCurrentNumberOfCirculations()) >= m_maxNumberOfCirculations && m_maxNumberOfCirculations >= 0)
     {
         return &m_image.atROI(m_image.sizeROI());
     }
